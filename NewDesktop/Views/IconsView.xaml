@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="NewDesktop.Views.IconView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dd="urn:gong-wpf-dragdrop">
+
+    <Border Background="#FFFFD700" CornerRadius="4" Width="64" Height="64">
+        <StackPanel Margin="5">
+            <TextBlock Text="{Binding Name}"/>
+            <TextBlock Text="{Binding Stock}" Margin="10,0,0,0"/>
+        </StackPanel>
+    </Border>
+</UserControl>

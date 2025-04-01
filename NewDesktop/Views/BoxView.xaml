@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="NewDesktop.Views.BoxView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:av="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dd="urn:gong-wpf-dragdrop"
+    xmlns:views1="clr-namespace:NewDesktop.Views"
+    xmlns:viewModels="clr-namespace:NewDesktop.ViewModels"
+    xmlns:behaviors="clr-namespace:NewDesktop.Behaviors"
+    mc:Ignorable="av" 
+    Width="{Binding Width}" av:DesignWidth="320"
+    Height="{Binding Height}" av:DesignHeight="320">
+
+    <!-- 折叠框Background="{DynamicResource  CardBackgroundFillColorSecondaryBrush}" -->
+    <Expander Padding="0,0,0,0" BorderThickness="0,0,0,0" VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" Background="{DynamicResource  CardBackgroundFillColorSecondaryBrush}" IsExpanded="True">
+        <!-- 头部内容 -->
+        <Expander.Header>
+            <Grid Margin="0,0,-12,0" Background="Transparent" Height="24" Cursor="SizeAll">
+                <!-- 拖动块 -->
+                <i:Interaction.Behaviors>
+                    <behaviors:DragBehavior/>
+                </i:Interaction.Behaviors>
+                <!-- 文本块 -->
+                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Grid>
+        </Expander.Header>
+
+        <!-- 主体内容 -->
+        <Grid Background="Transparent" Cursor="" Margin="-1,0,-1,-1">
+            <ScrollViewer x:Name="ContentScroll" HorizontalContentAlignment="Stretch" Margin="7,0,3,7">
+                <ScrollViewer.Resources>
+                    <Style TargetType="ScrollBar" BasedOn="{StaticResource CustomScrollBarStyle}"/>
+                </ScrollViewer.Resources>
+                <ItemsControl ItemsSource="{Binding Products}"
+                              dd:DragDrop.IsDragSource="True"
+                              dd:DragDrop.IsDropTarget="True"
+                              dd:DragDrop.DragHandler="{Binding}"
+                              dd:DragDrop.DropHandler="{Binding}"
+                              dd:DragDrop.UseDefaultEffectDataTemplate="True"
+                              dd:DragDrop.UseDefaultDragAdorner="True">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <!-- WrapPanel布局容器 -->
+                            <WrapPanel Background="Transparent" MinWidth="64" MinHeight="64"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type viewModels:IconModel}">
+                            <views1:IconView/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- 手柄（拖动窗口用） -->
+            <Thumb x:Name="Resize_L"    Panel.ZIndex="1"    Width="3"             HorizontalAlignment="Left"                              Cursor="SizeWE"     Margin="0,4,0,4"  OpacityMask="#00000000"/>
+            <Thumb x:Name="Resize_R"    Panel.ZIndex="1"    Width="3"             HorizontalAlignment="Right"                             Cursor="SizeWE"     Margin="0,4,0,4"  OpacityMask="#00000000" />
+            <Thumb x:Name="Resize_T"    Panel.ZIndex="1"               Height="3"                             VerticalAlignment="Top"     Cursor="SizeNS"     Margin="4,0,4,0"  OpacityMask="#00000000"/>
+            <Thumb x:Name="Resize_B"    Panel.ZIndex="1"               Height="3"                             VerticalAlignment="Bottom"  Cursor="SizeNS"     Margin="4,0,4,0"  OpacityMask="#00000000"/>
+            <Thumb x:Name="Resize_T_L"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Left"  VerticalAlignment="Top"     Cursor="SizeNWSE"                     OpacityMask="#00000000"/>
+            <Thumb x:Name="Resize_T_R"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Right" VerticalAlignment="Top"     Cursor="SizeNESW"                     OpacityMask="#00000000"/>
+            <Thumb x:Name="Resize_B_L"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Left"  VerticalAlignment="Bottom"  Cursor="SizeNESW"                     OpacityMask="#00000000"/>
+            <Thumb x:Name="Resize_B_R"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Cursor="SizeNWSE"                     OpacityMask="#00000000"/>
+        </Grid>
+    </Expander>
+
+</UserControl>
