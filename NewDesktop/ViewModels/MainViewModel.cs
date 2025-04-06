@@ -16,10 +16,10 @@ namespace NewDesktop.ViewModels;
 public partial class MainViewModel : ObservableObject, IDropTarget
 {
     [ObservableProperty]
-    private ObservableCollection<NewDesktop.ViewModels.BoxModel> _entities = new();
+    private ObservableCollection<BoxModel> _entities = new();
     
     [ObservableProperty]
-    private ObservableCollection<NewDesktop.ViewModels.IconModel> _entities1 = new();
+    private ObservableCollection<IconModel> _entities1 = new();
 
     /// <summary>
     /// 添加新盒子到随机位置
@@ -31,9 +31,9 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         {
             X = Random.Shared.Next(0, 800),
             Y = Random.Shared.Next(0, 600),
-            Name = $"盒子{Enumerable.OfType<NewDesktop.ViewModels.BoxModel>(Entities).Count() + 1}"
+            Name = $"盒子{Enumerable.OfType<BoxModel>(Entities).Count() + 1}"
         };
-        Entities.Add(new NewDesktop.ViewModels.BoxModel(shelf));
+        Entities.Add(new BoxModel(shelf));
     }
 
     /// <summary>
@@ -46,10 +46,10 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         {
             X = Random.Shared.Next(0, 800),
             Y = Random.Shared.Next(0, 600),
-            Name = $"控件{Enumerable.OfType<NewDesktop.ViewModels.IconModel>(Entities1).Count() + 1}",
+            Name = $"控件{Enumerable.OfType<IconModel>(Entities1).Count() + 1}",
             Stock = Random.Shared.Next(0, 600),
         };
-        Entities1.Add(new NewDesktop.ViewModels.IconModel(product));
+        Entities1.Add(new IconModel(product));
     }
 
     /// <summary>
@@ -60,8 +60,8 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     {
         var data = new
         {
-            Shelves = Enumerable.OfType<NewDesktop.ViewModels.BoxModel>(Entities).Select(s => s),
-            Products = Enumerable.OfType<NewDesktop.ViewModels.IconModel>(Entities).Select(p => p)
+            Shelves = Enumerable.OfType<BoxModel>(Entities).Select(s => s),
+            Products = Enumerable.OfType<IconModel>(Entities).Select(p => p)
         };
         File.WriteAllText(filePath, JsonConvert.SerializeObject(data, Formatting.Indented));
     }
@@ -74,8 +74,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
             dropInfo.DestinationText = "放置到桌面";
         }
     }
-
-// MainViewModel.cs
+    
     public void Drop(IDropInfo dropInfo)
     {
         if (dropInfo.Data is NewDesktop.ViewModels.IconModel iconModel)
@@ -86,9 +85,10 @@ public partial class MainViewModel : ObservableObject, IDropTarget
                 source.Remove(iconModel);
             }
 
-            // 直接使用现有实例
-            iconModel.X = dropInfo.DropPosition.X;
-            iconModel.Y = dropInfo.DropPosition.Y;
+            var dropPosition = dropInfo.DropPosition;
+            iconModel.X = dropPosition.X;
+            iconModel.Y = dropPosition.Y;
+
             Entities1.Add(iconModel);
         }
     }

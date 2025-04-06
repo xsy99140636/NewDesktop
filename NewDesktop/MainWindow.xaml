@@ -7,11 +7,10 @@
         WindowStyle="None"
         ResizeMode="NoResize"
         AllowsTransparency="True"
-        Background="Transparent"
         Left="0" Top="0"
         Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}}"
         Height="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}}"
-        AllowDrop="True">
+        AllowDrop="True" Background="Transparent">
         <!-- Background="Transparent" Width="1200" Height="800" WindowStyle="None" AllowsTransparency="True" -->
 
         <!-- 业务逻辑绑定 -->
@@ -19,13 +18,14 @@
             <viewModels:MainViewModel/>
         </Window.DataContext>
 
-        <Grid Background="Transparent">
+    <Grid Background="Transparent">
             <!-- 显示 -->
             <ItemsControl ItemsSource="{Binding Entities1}"
                           dd:DragDrop.IsDragSource="True"
                           dd:DragDrop.IsDropTarget="True"
+                          dd:DragDrop.DropHandler="{Binding }"
                           dd:DragDrop.UseDefaultDragAdorner="True"
-                          dd:DragDrop.UseDefaultEffectDataTemplate="True"><!-- dd:DragDrop.DragHandler="{Binding }" -->
+                          dd:DragDrop.UseDefaultEffectDataTemplate="True" Background="Transparent"><!-- dd:DragDrop.DragHandler="{Binding }" -->
                 
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -42,7 +42,7 @@
 
                 <ItemsControl.Resources>
                     <DataTemplate DataType="{x:Type viewModels:IconModel}">
-                        <views1:IconView/> <!-- Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" -->
+                        <views1:IconView Width="64" Height="64"/> <!-- Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" -->
                     </DataTemplate>
                 </ItemsControl.Resources>
                 <!-- -->

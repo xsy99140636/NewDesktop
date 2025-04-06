@@ -31,7 +31,7 @@ public partial class MainWindow
     public MainWindow()
     {
         InitializeComponent();
-        // Loaded += (s, e) => AttachToDesktop();
+        Loaded += (s, e) => AttachToDesktop();
     }
 
     private void AttachToDesktop()
@@ -64,8 +64,8 @@ public partial class MainWindow
         if (defView != IntPtr.Zero)
         {
             SetParent(hWnd, defView);
-            SetWindowLong(hWnd, GwlStyle, WsChild | WsVisible);
-            
+            SetWindowLong(hWnd, GwlStyle, WsVisible);// WsChild | WsVisible);
+
             // 确保窗口覆盖整个屏幕
             // SetWindowPos(hWnd, IntPtr.Zero,
             //     0, 0,

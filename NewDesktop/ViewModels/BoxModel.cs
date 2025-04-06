@@ -14,11 +14,15 @@ public partial class BoxModel : ObservableObject, IDropTarget
 {
     [ObservableProperty]
     private Box _model;
-    // private readonly Shelf _model;
 
     [ObservableProperty]
-    private ObservableCollection<IconModel> _products = new();
-
+    private ObservableCollection<IconModel> _icon = new();
+    
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Height))]
+    private double _height1;
+    
+    #region 属性绑定
     public double X
     {
         get => Model.X;
@@ -40,20 +44,31 @@ public partial class BoxModel : ObservableObject, IDropTarget
     public double Height
     {
         get => Model.Height;
-        set => SetProperty<Box, double>(Model.Height, value, Model, (m, v) => m.Height = v);
+        set
+        {
+            if (SetProperty(_model.Height, value, _model, (m, v) => m.Height = v))
+            {
+                Height1 = value; // 同步更新Height1
+            }
+        }
     }
-
-    public BoxModel(Box model)
-    {
-        _model = model;
-        foreach (var product in _model.Products) Products.Add(new IconModel(product));
-    }
+    
     public string Name
     {
         get => Model.Name;
         set => SetProperty<Box, string>(Model.Name, value, Model, (m, v) => m.Name = v);
     }
 
+    #endregion
+    
+    public BoxModel(Box model)
+    {
+        _model = model;
+        foreach (var product in _model.Products) Icon.Add(new IconModel(product));
+        _height1 = model.Height; // 初始化 Height1
+    }
+    
+    #region 拖动    
     // 拖动到目标区域时触发
     public void DragOver(IDropInfo dropInfo)
     {
@@ -67,7 +82,6 @@ public partial class BoxModel : ObservableObject, IDropTarget
     }
 
     // 放置时触发
-// BoxModel.cs
     public void Drop(IDropInfo dropInfo)
     {
         if (dropInfo.Data is IconModel iconModel)
@@ -80,7 +94,8 @@ public partial class BoxModel : ObservableObject, IDropTarget
 
             // 直接添加现有实例（不需要克隆）
             Model.Products.Add(iconModel.Model);
-            Products.Add(iconModel);
+            Icon.Add(iconModel);
         }
-    } 
+    }
+    #endregion
 }

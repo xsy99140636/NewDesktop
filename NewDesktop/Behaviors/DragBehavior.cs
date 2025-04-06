@@ -110,6 +110,9 @@ public class DragBehavior : Behavior<FrameworkElement>
         AssociatedObject.ReleaseMouseCapture();
     }
     #endregion
+
+    #region 工具
+
     /// <summary>
     /// 在可视化树中查找最近的父级Canvas容器
     /// </summary>
@@ -126,7 +129,7 @@ public class DragBehavior : Behavior<FrameworkElement>
         }
         return null;
     }
-    #region 工具
+
     // /// <summary>查找控件（ItemsControl或Canvas）</summary>
     // /// <param name="startObject">查找起点</param>
     // /// <param name="typeObject">查找目标</param>
