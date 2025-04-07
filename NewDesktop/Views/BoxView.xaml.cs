@@ -10,7 +10,6 @@ namespace NewDesktop.Views;
 public partial class BoxView
 {
     private bool _isExpanded = true;       // 当前是否展开状态
-    private double _expandedHeight;
 
     private readonly Thumb[] _resizeThumbs;
     
@@ -18,12 +17,7 @@ public partial class BoxView
     /// 边缘空白区域宽度（用于计算有效内容区域）
     /// </summary>
     private static double MARGIN_SIZE { get; } = 7;
-
-    /// <summary>
-    /// 标题栏标准高度（包含折叠按钮区域）
-    /// </summary>
-    public static double Header_SIZE { get; } = 24;
-
+    
     /// <summary>
     /// 尺寸对齐单位（按住CTRL时调整尺寸的基准单位）
     /// </summary>
@@ -61,7 +55,7 @@ public partial class BoxView
             // 动画：收缩到仅标题栏高度
             var animation = new DoubleAnimation
             {
-                To = 24,
+                To = iconData.HeadHeight,
                 Duration = TimeSpan.FromSeconds(0.3),
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
             };
@@ -70,7 +64,7 @@ public partial class BoxView
             {
                 BeginAnimation(HeightProperty, null);
                 // 动画结束后更新ViewModel
-                iconData.Height1 = 24;
+                iconData.Height1 = iconData.HeadHeight;
                 _isExpanded = !_isExpanded;
                 Debug.WriteLine($"收起: {iconData.Height}");
                 // RestoreThumbs();
@@ -200,7 +194,7 @@ public partial class BoxView
         var rawHeight = BoxModel.Height + delta;
 
         // 计算边距总高度（顶部边距+标题栏高度）
-        double marginTotal = MARGIN_SIZE + Header_SIZE;
+        double marginTotal = MARGIN_SIZE + BoxModel.HeadHeight;
 
         // 应用尺寸约束
         var newHeight = ApplySizeConstraint(rawHeight, SNAP_UNIT, marginTotal);
@@ -219,7 +213,7 @@ public partial class BoxView
         // 应用新高度
         BoxModel.Height = newHeight;
         // Height = newHeight;
-        _expandedHeight = newHeight; // 保持缓存值更新
+        // _expandedHeight = newHeight; // 保持缓存值更新
         // 使用字符串插值输出变量值
         Debug.WriteLine($"newHeight: {newHeight}");
     }

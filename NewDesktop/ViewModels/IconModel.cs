@@ -60,8 +60,17 @@ public partial class IconModel : ObservableObject, IDragSource
     // 开始拖动时的初始化操作
     public void StartDrag(IDragInfo dragInfo)
     {
-        dragInfo.Data = this; // 传递数据模型.Model
+        // 获取所有选中的项（支持多选）
+        var selectedItems = dragInfo.SourceItems?.Cast<IconModel>().ToList() 
+                            ?? new List<IconModel> { this };
+        // 传递选中的集合
+        dragInfo.Data = selectedItems.Count == 1 ? 
+            selectedItems.First() : 
+            selectedItems.AsEnumerable();
+        
         dragInfo.Effects = DragDropEffects.Move;
+        // dragInfo.Data = this; // 传递数据模型.Model
+        // dragInfo.Effects = DragDropEffects.Move;
     }
     
     // 判断是否允许启动拖动操作（这里始终允许）

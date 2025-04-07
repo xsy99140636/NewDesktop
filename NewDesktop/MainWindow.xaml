@@ -11,73 +11,76 @@
         Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}}"
         Height="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}}"
         AllowDrop="True" Background="Transparent">
-        <!-- Background="Transparent" Width="1200" Height="800" WindowStyle="None" AllowsTransparency="True" -->
+    <!-- Background="Transparent" Width="1200" Height="800" WindowStyle="None" AllowsTransparency="True" -->
 
-        <!-- 业务逻辑绑定 -->
-        <Window.DataContext>
-            <viewModels:MainViewModel/>
-        </Window.DataContext>
+    <!-- 业务逻辑绑定 -->
+    <Window.DataContext>
+        <viewModels:MainViewModel/>
+    </Window.DataContext>
 
-    <Grid Background="Transparent">
-            <!-- 显示 -->
-            <ItemsControl ItemsSource="{Binding Entities1}"
-                          dd:DragDrop.IsDragSource="True"
-                          dd:DragDrop.IsDropTarget="True"
-                          dd:DragDrop.DropHandler="{Binding }"
-                          dd:DragDrop.UseDefaultDragAdorner="True"
-                          dd:DragDrop.UseDefaultEffectDataTemplate="True" Background="Transparent"><!-- dd:DragDrop.DragHandler="{Binding }" -->
-                
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas  Background="Transparent"/> <!-- Canvas布局容器 -->
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+    <Grid Background="Wheat">
+        <!-- 显示 -->
+        <ListView ItemsSource="{Binding Icon}"
+                  Style="{StaticResource CustomListViewStyle}"
+                  dd:DragDrop.IsDragSource="True"
+                  dd:DragDrop.IsDropTarget="True"
+                  dd:DragDrop.DropHandler="{Binding }"
+                  dd:DragDrop.UseDefaultDragAdorner="True"
+                  dd:DragDrop.UseDefaultEffectDataTemplate="True" Background="Transparent">
+            <!-- dd:DragDrop.DragHandler="{Binding }" -->
 
-                <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding X, Mode=TwoWay}"/>
-                        <Setter Property="Canvas.Top" Value="{Binding Y, Mode=TwoWay}"/>
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas  Background="Transparent"/><!-- Canvas布局容器 -->
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
 
-                <ItemsControl.Resources>
-                    <DataTemplate DataType="{x:Type viewModels:IconModel}">
-                        <views1:IconView Width="64" Height="64"/> <!-- Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" -->
-                    </DataTemplate>
-                </ItemsControl.Resources>
-                <!-- -->
-                <!-- <ItemsControl.ItemTemplate> -->
-                <!--     <DataTemplate DataType="{x:Type vm:IconModel}"> -->
-                <!--         <Border Background="#FFFFE0B2" Margin="2" Width="70" Height="30"> -->
-                <!--             <TextBlock Text="{Binding Name}" Margin="5"/> -->
-                <!--         </Border> -->
-                <!--     </DataTemplate> -->
-                <!-- </ItemsControl.ItemTemplate> -->
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem"
+                       BasedOn="{StaticResource CustomListViewItemStyle}">
+                    <Setter Property="Canvas.Left" Value="{Binding X, Mode=TwoWay}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding Y, Mode=TwoWay}"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+
+            <ListView.Resources>
+                <DataTemplate DataType="{x:Type viewModels:IconModel}">
+                    <views1:IconView Width="64" Height="64"/><!-- Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" -->
+                </DataTemplate>
+            </ListView.Resources>
+            <!-- -->
+            <!-- <ItemsControl.ItemTemplate> -->
+            <!--     <DataTemplate DataType="{x:Type vm:IconModel}"> -->
+            <!--         <Border Background="#FFFFE0B2" Margin="2" Width="70" Height="30"> -->
+            <!--             <TextBlock Text="{Binding Name}" Margin="5"/> -->
+            <!--         </Border> -->
+            <!--     </DataTemplate> -->
+            <!-- </ItemsControl.ItemTemplate> -->
+        </ListView>
+
+        <ItemsControl ItemsSource="{Binding Entities}">
+
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas/><!-- Canvas布局容器 -->
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="Canvas.Left" Value="{Binding X, Mode=TwoWay}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding Y, Mode=TwoWay}"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+
+            <ItemsControl.Resources>
+                <DataTemplate DataType="{x:Type viewModels:BoxModel}">
+                    <views1:BoxView/>
+                    <!-- Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" -->
+                </DataTemplate>
+            </ItemsControl.Resources>
 
         </ItemsControl>
-            
-            <ItemsControl ItemsSource="{Binding Entities}">
-                
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas/> <!-- Canvas布局容器 -->
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-
-                <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding X, Mode=TwoWay}"/>
-                        <Setter Property="Canvas.Top" Value="{Binding Y, Mode=TwoWay}"/>
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
-
-                <ItemsControl.Resources>
-                    <DataTemplate DataType="{x:Type viewModels:BoxModel}">
-                        <views1:BoxView/> <!-- Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" -->
-                    </DataTemplate>
-                </ItemsControl.Resources>
-                
-            </ItemsControl>
 
         <!-- 操作面板 -->
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="10">

@@ -26,19 +26,19 @@ public partial class BoxModel : ObservableObject, IDropTarget
     public double X
     {
         get => Model.X;
-        set => SetProperty<Box, double>(Model.X, value, Model, (m, v) => m.X = v);
+        set => SetProperty(Model.X, value, Model, (m, v) => m.X = v);
     }
 
     public double Y
     {
         get => Model.Y;
-        set => SetProperty<Box, double>(Model.Y, value, Model, (m, v) => m.Y = v);
+        set => SetProperty(Model.Y, value, Model, (m, v) => m.Y = v);
     }
 
     public double Width
     {
         get => Model.Width;
-        set => SetProperty<Box, double>(Model.Width, value, Model, (m, v) => m.Width = v);
+        set => SetProperty(Model.Width, value, Model, (m, v) => m.Width = v);
     }
 
     public double Height
@@ -46,7 +46,7 @@ public partial class BoxModel : ObservableObject, IDropTarget
         get => Model.Height;
         set
         {
-            if (SetProperty(_model.Height, value, _model, (m, v) => m.Height = v))
+            if (SetProperty(Model.Height, value, Model, (m, v) => m.Height = v))
             {
                 Height1 = value; // 同步更新Height1
             }
@@ -56,46 +56,89 @@ public partial class BoxModel : ObservableObject, IDropTarget
     public string Name
     {
         get => Model.Name;
-        set => SetProperty<Box, string>(Model.Name, value, Model, (m, v) => m.Name = v);
+        set => SetProperty(Model.Name, value, Model, (m, v) => m.Name = v);
     }
 
+    public double HeadHeight
+    {
+        get => Model.HeadHeight;
+        set => SetProperty(Model.HeadHeight, value, Model, (m, v) => m.HeadHeight = v);
+    }
+    
     #endregion
     
     public BoxModel(Box model)
     {
         _model = model;
         foreach (var product in _model.Products) Icon.Add(new IconModel(product));
+        
         _height1 = model.Height; // 初始化 Height1
     }
     
-    #region 拖动    
-    // 拖动到目标区域时触发
+    #region 拖动处理
+
+    /// <summary>
+    /// 拖拽悬停时触发的逻辑（验证拖拽数据有效性）
+    /// </summary>
+    /// <param name="dropInfo">拖拽信息对象，包含拖拽数据和上下文</param>
     public void DragOver(IDropInfo dropInfo)
     {
-        // 检查是否是 Icon 或 IconModel 类型
-        if (dropInfo.Data is IconModel || dropInfo.Data is Icon)
+        // 验证拖拽数据是否符合要求：
+        // 1. 单个 IconModel 对象
+        // 2. 或多个 IconModel 组成的集合
+        bool validData = dropInfo.Data is IconModel
+                         || (dropInfo.Data is IEnumerable items && items.Cast<object>().All(x => x is IconModel));
+    
+        if (validData)
         {
+            // 设置拖拽效果为移动操作
             dropInfo.Effects = DragDropEffects.Move;
-            //dropInfo.DestinationText = $"移动到 {Model}";
-            dropInfo.DestinationText = $"{Name}";
+            // 显示友好提示文本
+            dropInfo.DestinationText = $"放入{Name}";
         }
     }
 
-    // 放置时触发
+    /// <summary>
+    /// 拖拽释放时的处理逻辑（完成数据转移）
+    /// </summary>
+    /// <param name="dropInfo">拖拽信息对象</param>
     public void Drop(IDropInfo dropInfo)
     {
-        if (dropInfo.Data is IconModel iconModel)
+        // 处理单个项目拖拽
+        if (dropInfo.Data is IconModel singleItem)
         {
-            // 从原集合移除（安全写法）
-            if (dropInfo.DragInfo.SourceCollection is IList source)
+            MoveItem(singleItem, dropInfo.DragInfo.SourceCollection);
+        }
+        // 处理多选项目拖拽
+        else if (dropInfo.Data is IEnumerable multipleItems)
+        {
+            // 转换为具体对象列表（避免迭代时修改集合的问题）
+            foreach (IconModel item in multipleItems.Cast<IconModel>().ToList())
             {
-                source.Remove(iconModel);
+                MoveItem(item, dropInfo.DragInfo.SourceCollection);
             }
-
-            // 直接添加现有实例（不需要克隆）
-            Model.Products.Add(iconModel.Model);
-            Icon.Add(iconModel);
         }
     }
+
+    /// <summary>
+    /// 执行单个项目的移动操作
+    /// </summary>
+    /// <param name="item">要移动的图标对象</param>
+    /// <param name="source">原始所属集合</param>
+    private void MoveItem(IconModel item, IEnumerable source)
+    {
+        // 从源集合中移除（仅当源支持修改时）
+        if (source is IList list) list.Remove(item);
+    
+        // 避免重复添加至目标集合
+        if (!Icon.Contains(item)) 
+        {
+            // 添加至当前集合
+            Icon.Add(item);
+            // 同步更新底层数据模型
+            Model.Products.Add(item.Model);
+        }
+    }
+
     #endregion
 }

@@ -16,7 +16,7 @@
         <Grid>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="24"/>
+                <RowDefinition Height="{Binding HeadHeight}"/>
                 <!-- 固定标题行 -->
                 <RowDefinition Height="*"/>
                 <!-- 可折叠内容行 -->
@@ -66,7 +66,7 @@
             </ListView>
 
             <!-- 手柄（拖动窗口用） -->
-            <Grid Grid.RowSpan="2">
+            <Grid Grid.Row="0" Grid.RowSpan="2">
                 <Thumb x:Name="Resize_L"    Panel.ZIndex="1"    Width="3"             HorizontalAlignment="Left"                              Cursor="SizeWE"     Margin="0,4,0,4"  OpacityMask="#00000000"/>
                 <Thumb x:Name="Resize_R"    Panel.ZIndex="1"    Width="3"             HorizontalAlignment="Right"                             Cursor="SizeWE"     Margin="0,4,0,4"  OpacityMask="#00000000" />
                 <Thumb x:Name="Resize_T"    Panel.ZIndex="1"               Height="3"                             VerticalAlignment="Top"     Cursor="SizeNS"     Margin="4,0,4,0"  OpacityMask="#00000000"/>
