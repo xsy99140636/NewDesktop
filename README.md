@@ -7,13 +7,16 @@ NewDesktop/
 ├── Behaviors/                # 自定义交互行为
 │   └── DragBehavior.cs       # 盒子拖拽行为实现类
 ├── Models/                   # 数据模型层
-│   ├── Box.cs               
-│   ├── Icon.cs              
-│   └── PositionedObject.cs  
+│   ├── Box.cs
+│   ├── Icon.cs
+│   └── PositionedObject.cs
+├── Styles
+│   ├── Dictionary.xaml       # 滚动条样式
+│   └── ListViewStyle.xaml    # listView样式
 ├── ViewModels/               # 视图模型层
-│   ├── BoxModel.cs          
-│   ├── IconModel.cs         
-│   └── MainViewModel.cs     
+│   ├── BoxModel.cs
+│   ├── IconModel.cs
+│   └── MainViewModel.cs
 ├── Views/                    # 视图层
 │   ├── BoxView.xaml          # 盒子控件
 │   ├── IconView.xaml         # 图标控件  
@@ -29,6 +32,6 @@ NewDesktop/
 | 整理盒子拖动改变位置功能 | 100% | 已经可用                 |
 | 整理盒子拖动改变大小功能 | 100% | 已经可用                 |
 | 图标控件         | 50%  | 文字等需添加               |
-| 图标控件拖动改变位置功能 | 90%  | 已经可用，但画布拖动受透明度影响，待解决 |
+| 图标控件拖动改变位置功能 | 90%  | 已经可用，支持多个同时拖动，但画布拖动受透明度影响，待解决 |
 | 布局保存加载功能     | 50%  | 施工中                  |
 | 桌面文件监视功能     | 0%   |                      |
