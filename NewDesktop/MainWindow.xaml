@@ -20,7 +20,7 @@
 
     <Grid Background="Wheat">
         <!-- 显示 -->
-        <ListView ItemsSource="{Binding Icon}"
+        <ListView ItemsSource="{Binding Icons}"
                   Style="{StaticResource CustomListViewStyle}"
                   dd:DragDrop.IsDragSource="True"
                   dd:DragDrop.IsDropTarget="True"
@@ -84,9 +84,11 @@
 
         <!-- 操作面板 -->
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="10">
-            <Button Content="新建桌面盒子" Command="{Binding AddShelfCommand}" />
+            <Button Content="新建桌面盒子" Command="{Binding AddShelfCommand}" Margin="10,0"/>
             <Button Content="添加桌面图标" Command="{Binding AddProductCommand}"  Margin="10,0"/>
-            <Button Content="保存布局" Command="{Binding SaveLayoutCommand}" CommandParameter="layout.json" />
+            <Button Content="保存布局" Command="{Binding ExportLayoutCommand}" CommandParameter="layout.json" Margin="10,0"/>
+            <Button Content="加载布局" Command="{Binding ImportLayoutCommand}" CommandParameter="layout.json" Margin="10,0"/>
+            <Button Content="Box设置" Command="{Binding OpenBoxSettingsCommand}" Margin="10,0"/>
         </StackPanel>
     </Grid>
 </Window>

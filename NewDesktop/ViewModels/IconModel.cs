@@ -20,25 +20,31 @@ public partial class IconModel : ObservableObject, IDragSource
     public string Name
     {
         get => Model.Name;
-        set => SetProperty<Icon, string>(Model.Name, value, Model, (m, v) => m.Name = v);
+        set => SetProperty(Model.Name, value, Model, (m, v) => m.Name = v);
     }
-
+    
+    public string Path
+    {
+        get => Model.Path;
+        set => SetProperty(Model.Path, value, Model, (m, v) => m.Path = v);
+    }
+    
     public int Stock
     {
         get => Model.Stock;
-        set => SetProperty<Icon, int>(Model.Stock, value, Model, (m, v) => m.Stock = v);
+        set => SetProperty(Model.Stock, value, Model, (m, v) => m.Stock = v);
     }
 
     public double X
     {
         get => Model.X;
-        set => SetProperty<Icon, double>(Model.X, value, Model, (m, v) => m.X = v);
+        set => SetProperty(Model.X, value, Model, (m, v) => m.X = v);
     }
 
     public double Y
     {
         get => Model.Y;
-        set => SetProperty<Icon, double>(Model.Y, value, Model, (m, v) => m.Y = v);
+        set => SetProperty(Model.Y, value, Model, (m, v) => m.Y = v);
     }
 
     #endregion
@@ -49,10 +55,10 @@ public partial class IconModel : ObservableObject, IDragSource
         _model = model;
     }
         
-    public IconModel(Icon model)
-    {
-        _model = model;
-    }
+    // public IconModel(Icon model)
+    // {
+    //     _model = model;
+    // }
 
 
     #region 拖动

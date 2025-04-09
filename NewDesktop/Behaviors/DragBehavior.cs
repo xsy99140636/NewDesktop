@@ -17,21 +17,14 @@ namespace NewDesktop.Behaviors;
 /// </summary>
 public class DragBehavior : Behavior<FrameworkElement>
 {
-    // 拖动状态相关字段
-    // private ContentPresenter _contentPresenter;
-    // private Canvas _parentCanvas;
-    // private Point _dragStartPosition;// 拖动起始位置（相对容器坐标系）
-    //
-    // private double _initialLeft, _initialTop;
-    // private FrameworkElement? _parent;     // 父级画布容器引用
-    
     // 拖拽起始点坐标（相对于Canvas）
     private Point _startPoint;
-    // 拖拽状态标志
-    private bool _isDragging;// 是否处于拖动状态标志位
 
-    
+    // 拖拽状态标志
+    private bool _isDragging; // 是否处于拖动状态标志位
+
     #region 事件绑定
+
     /// <summary>
     /// 将行为附加到UI元素时初始化事件监听
     /// </summary>
@@ -44,8 +37,6 @@ public class DragBehavior : Behavior<FrameworkElement>
             AssociatedObject.MouseMove += OnMouseMove;
             AssociatedObject.MouseLeftButtonUp += OnMouseUp;
         }
-
-        
     }
     
     /// <summary>
@@ -57,6 +48,10 @@ public class DragBehavior : Behavior<FrameworkElement>
         AssociatedObject.MouseMove -= OnMouseMove;
         AssociatedObject.MouseLeftButtonUp -= OnMouseUp;
     }
+
+    #endregion
+    
+    #region 拖拽处理
     
     /// <summary>
     /// 鼠标按下事件处理器 - 开始拖动操作
@@ -68,9 +63,9 @@ public class DragBehavior : Behavior<FrameworkElement>
 
         // 初始化拖拽状态
         _isDragging = true;
-        _startPoint = e.GetPosition(canvas);  // 记录起始点（相对于Canvas坐标系）
-        AssociatedObject.CaptureMouse();      // 捕获鼠标确保后续事件
-        e.Handled = true;                     // 标记事件已处理
+        _startPoint = e.GetPosition(canvas); // 记录起始点（相对于Canvas坐标系）
+        AssociatedObject.CaptureMouse(); // 捕获鼠标确保后续事件
+        e.Handled = true; // 标记事件已处理
     }
 
     /// <summary>
@@ -95,7 +90,7 @@ public class DragBehavior : Behavior<FrameworkElement>
             item.Y += delta.Y;
         }
 
-        _startPoint = currentPoint;  // 更新起始点为当前位置
+        _startPoint = currentPoint; // 更新起始点为当前位置
     }
 
     /// <summary>
@@ -105,10 +100,11 @@ public class DragBehavior : Behavior<FrameworkElement>
     {
         // 重置拖拽状态标志
         _isDragging = false;
-        
+
         // 释放鼠标捕获
         AssociatedObject.ReleaseMouseCapture();
     }
+
     #endregion
 
     #region 工具
@@ -127,6 +123,7 @@ public class DragBehavior : Behavior<FrameworkElement>
             if (current is Canvas canvas) return canvas;
             current = VisualTreeHelper.GetParent(current);
         }
+
         return null;
     }
 
@@ -146,5 +143,6 @@ public class DragBehavior : Behavior<FrameworkElement>
     //     }
     //     return null;
     // }
+
     #endregion
 }

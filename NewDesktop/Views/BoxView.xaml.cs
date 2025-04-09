@@ -9,8 +9,7 @@ namespace NewDesktop.Views;
 
 public partial class BoxView
 {
-    private bool _isExpanded = true;       // 当前是否展开状态
-
+    // 调整手柄数组
     private readonly Thumb[] _resizeThumbs;
     
     /// <summary>
@@ -21,30 +20,22 @@ public partial class BoxView
     /// <summary>
     /// 尺寸对齐单位（按住CTRL时调整尺寸的基准单位）
     /// </summary>
-    public static double SNAP_UNIT { get; set; } = 64;
+    private static double SNAP_UNIT { get; set; } = 64;
 
     public BoxView()
     {
-        
         InitializeComponent();
-
-        // ss();
         // 初始化调整手柄数组（按顺序存储八个方向的手柄）
         _resizeThumbs = [Resize_L, Resize_R, Resize_T, Resize_B, Resize_T_L, Resize_T_R, Resize_B_L, Resize_B_R];InitializeResizeHandlers();
     }
-
-    // private void ss()
-    // {
-    //     if (!(DataContext is BoxModel iconData)) return;
-    //     _expandedHeight = iconData.Height;
-    // }
-
-    // 折叠/展开按钮点击事件处理
+    
+    #region 折叠/展开功能
+    
     private void ToggleButton_Click(object sender, RoutedEventArgs e)
     {
         if (!(DataContext is BoxModel iconData)) return;
         
-        if (_isExpanded)
+        if (iconData.IsExpanded == true)
         {
             // 禁用动画期间的手柄操作
             foreach (var thumb in _resizeThumbs)
@@ -65,7 +56,7 @@ public partial class BoxView
                 BeginAnimation(HeightProperty, null);
                 // 动画结束后更新ViewModel
                 iconData.Height1 = iconData.HeadHeight;
-                _isExpanded = !_isExpanded;
+                iconData.IsExpanded = false;
                 Debug.WriteLine($"收起: {iconData.Height}");
                 // RestoreThumbs();
             };
@@ -73,7 +64,7 @@ public partial class BoxView
             return;
         }
 
-        if (!_isExpanded)
+        if (iconData.IsExpanded == false)
         {
             // 动画：展开到保存的高度
             var animation1 = new DoubleAnimation
@@ -88,7 +79,7 @@ public partial class BoxView
                 BeginAnimation(HeightProperty, null);
                 // 动画结束后更新ViewModel
                 iconData.Height1 = iconData.Height;
-                _isExpanded = !_isExpanded;
+                iconData.IsExpanded = true;
                 Debug.WriteLine($"展开: {iconData.Height}");
                 // 禁用动画期间的手柄操作
                 foreach (var thumb in _resizeThumbs)
@@ -127,7 +118,8 @@ public partial class BoxView
         
         Debug.WriteLine($"现在: {iconData.Height}");
     }
-
+    #endregion
+    
     #region 尺寸调整功能
 
     /// <summary>
@@ -136,16 +128,16 @@ public partial class BoxView
     private void InitializeResizeHandlers()
     {
         // 四边调整配置
-        _resizeThumbs[0].DragDelta += (s, e) => AdjustWidth(-e.HorizontalChange, true);  // 左侧调整
-        _resizeThumbs[1].DragDelta += (s, e) => AdjustWidth(e.HorizontalChange, false);  // 右侧调整
-        _resizeThumbs[2].DragDelta += (s, e) => AdjustHeight(-e.VerticalChange, true);   // 顶部调整
-        _resizeThumbs[3].DragDelta += (s, e) => AdjustHeight(e.VerticalChange, false);    // 底部调整
+        _resizeThumbs[0].DragDelta += (_, e) => AdjustWidth(-e.HorizontalChange, true);  // 左侧调整
+        _resizeThumbs[1].DragDelta += (_, e) => AdjustWidth(e.HorizontalChange, false);  // 右侧调整
+        _resizeThumbs[2].DragDelta += (_, e) => AdjustHeight(-e.VerticalChange, true);   // 顶部调整
+        _resizeThumbs[3].DragDelta += (_, e) => AdjustHeight(e.VerticalChange, false);    // 底部调整
 
         // 四角调整配置（组合宽度和高度调整）
-        _resizeThumbs[4].DragDelta += (s, e) => { AdjustWidth(-e.HorizontalChange, true); AdjustHeight(-e.VerticalChange, true); };  // 左上角
-        _resizeThumbs[5].DragDelta += (s, e) => { AdjustWidth(e.HorizontalChange, false); AdjustHeight(-e.VerticalChange, true); };  // 右上角
-        _resizeThumbs[6].DragDelta += (s, e) => { AdjustWidth(-e.HorizontalChange, true); AdjustHeight(e.VerticalChange, false); };  // 左下角
-        _resizeThumbs[7].DragDelta += (s, e) => { AdjustWidth(e.HorizontalChange, false); AdjustHeight(e.VerticalChange, false); }; // 右下角
+        _resizeThumbs[4].DragDelta += (_, e) => { AdjustWidth(-e.HorizontalChange, true); AdjustHeight(-e.VerticalChange, true); };  // 左上角
+        _resizeThumbs[5].DragDelta += (_, e) => { AdjustWidth(e.HorizontalChange, false); AdjustHeight(-e.VerticalChange, true); };  // 右上角
+        _resizeThumbs[6].DragDelta += (_, e) => { AdjustWidth(-e.HorizontalChange, true); AdjustHeight(e.VerticalChange, false); };  // 左下角
+        _resizeThumbs[7].DragDelta += (_, e) => { AdjustWidth(e.HorizontalChange, false); AdjustHeight(e.VerticalChange, false); }; // 右下角
     }
 
     /// <summary>
@@ -153,7 +145,7 @@ public partial class BoxView
     /// </summary>
     private void AdjustWidth(double delta, bool adjustLeft)
     {
-        if (!(DataContext is BoxModel BoxModel))
+        if (!(DataContext is BoxModel boxModel))
             return;
 
         // 计算原始新宽度（当前宽度加上变化量）
@@ -174,12 +166,12 @@ public partial class BoxView
         // 调整左侧位置（当从左侧调整时）
         if (adjustLeft)
         {
-            var newX = BoxModel.X - widthDelta;
-            BoxModel.X = newX;
+            var newX = boxModel.X - widthDelta;
+            boxModel.X = newX;
         }
 
         // 应用新宽度
-        BoxModel.Width = newWidth;
+        boxModel.Width = newWidth;
     }
 
     /// <summary>
@@ -187,14 +179,14 @@ public partial class BoxView
     /// </summary>
     private void AdjustHeight(double delta, bool adjustTop)
     {
-        if (!(DataContext is BoxModel BoxModel))
+        if (!(DataContext is BoxModel boxModel))
             return;
 
         // 计算原始新高度（当前高度加上变化量）
-        var rawHeight = BoxModel.Height + delta;
+        var rawHeight = boxModel.Height + delta;
 
         // 计算边距总高度（顶部边距+标题栏高度）
-        double marginTotal = MARGIN_SIZE + BoxModel.HeadHeight;
+        double marginTotal = MARGIN_SIZE + boxModel.HeadHeight;
 
         // 应用尺寸约束
         var newHeight = ApplySizeConstraint(rawHeight, SNAP_UNIT, marginTotal);
@@ -207,11 +199,11 @@ public partial class BoxView
         // 调整顶部位置
         if (adjustTop)
         {
-            BoxModel.Y -= (newHeight - BoxModel.Height);
+            boxModel.Y -= (newHeight - boxModel.Height);
         }
 
         // 应用新高度
-        BoxModel.Height = newHeight;
+        boxModel.Height = newHeight;
         // Height = newHeight;
         // _expandedHeight = newHeight; // 保持缓存值更新
         // 使用字符串插值输出变量值

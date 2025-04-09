@@ -13,7 +13,11 @@ public partial class Icon : PositionedObject
 
     [ObservableProperty]
     private int _stock = 200;
-        
+    
+    [ObservableProperty]
+    //[NotifyPropertyChangedFor(nameof(DisplayName))] // 当名称变化时通知显示名称
+    private string _path = "";
+    
     // 示例计算属性
-    public string DisplayName => $"{Name} (库存:{Stock})";
+    // public string DisplayName => $"{Name} (库存:{Stock})";
 }

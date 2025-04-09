@@ -5,6 +5,7 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GongSolutions.Wpf.DragDrop;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using NewDesktop.Models;
 
@@ -19,8 +20,11 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     private ObservableCollection<BoxModel> _entities = new();
     
     [ObservableProperty]
-    private ObservableCollection<IconModel> _icon = new();
-
+    private BoxModel? _selectedEntity;
+    
+    [ObservableProperty]
+    private ObservableCollection<IconModel> _icons = new();
+    
     /// <summary>
     /// 添加新盒子到随机位置
     /// </summary>
@@ -36,6 +40,10 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         Entities.Add(new BoxModel(shelf));
     }
 
+    [RelayCommand]
+    private void RemoveShelf() => Entities.Remove(SelectedEntity);
+
+
     /// <summary>
     /// 添加新图标到随机位置
     /// </summary>
@@ -46,25 +54,126 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         {
             X = Random.Shared.Next(0, 800),
             Y = Random.Shared.Next(0, 600),
-            Name = $"控件{Enumerable.OfType<IconModel>(Icon).Count() + 1}",
+            Name = $"控件{Enumerable.OfType<IconModel>(Icons).Count() + 1}",
             Stock = Random.Shared.Next(0, 600),
         };
-        Icon.Add(new IconModel(product));
+        Icons.Add(new IconModel(product));
     }
 
+    
+    #region 保存加载
+    
+    [RelayCommand]
+    private void ExportLayout()
+    {
+        var saveFileDialog = new SaveFileDialog
+        {
+            Filter = "JSON 文件 (*.json)|*.json",
+            DefaultExt = ".json",
+            FileName = "桌面布局.json"
+        };
+
+        if (saveFileDialog.ShowDialog() == true)
+        {
+            SaveLayout(saveFileDialog.FileName);
+        }
+    }
+
+    [RelayCommand]
+    private void ImportLayout()
+    {
+        var openFileDialog = new OpenFileDialog
+        {
+            Filter = "JSON 文件 (*.json)|*.json",
+            DefaultExt = ".json"
+        };
+
+        if (openFileDialog.ShowDialog() == true)
+        {
+            LoadLayout(openFileDialog.FileName);
+        }
+    }
+    
     /// <summary>
     /// 保存当前布局到JSON文件
     /// </summary>
     [RelayCommand]
-    private void SaveLayout(string filePath)
+    private void SaveLayout(string path)
     {
-        // var data = new
-        // {
-        //     Shelves = Enumerable.OfType<BoxModel>(Entities).Select(s => s),
-        //     Products = Enumerable.OfType<IconModel>(Entities).Select(p => p)
-        // };
-        // File.WriteAllText(filePath, JsonConvert.SerializeObject(data, Formatting.Indented));
+        try
+        {
+            var data = new
+            {
+                Boxes = Entities.Select(b => b.Model),
+                Icons = Icons.Select(i => i.Model)
+            };
+
+            string json = JsonConvert.SerializeObject(data, Formatting.Indented, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+
+            File.WriteAllText(path, json);
+
+            // 显示成功消息
+            // MessageBox.Show("布局保存成功!", "成功", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"保存失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
+    
+    [RelayCommand]
+    private void LoadLayout(string path)
+    {
+        try
+        {
+            string json = File.ReadAllText(path);
+            var data = JsonConvert.DeserializeObject<dynamic>(json);
+
+            // 清空当前数据
+            Entities.Clear();
+            Icons.Clear();
+
+            // 加载盒子
+            if (data.Boxes != null)
+            {
+                foreach (var boxJson in data.Boxes)
+                {
+                    var box = JsonConvert.DeserializeObject<Box>(boxJson.ToString());
+                    Entities.Add(new BoxModel(box));
+                }
+            }
+
+            // 加载图标
+            if (data.Icons != null)
+            {
+                foreach (var iconJson in data.Icons)
+                {
+                    var icon = JsonConvert.DeserializeObject<Icon>(iconJson.ToString());
+                    Icons.Add(new IconModel(icon));
+                }
+            }
+            
+            // MessageBox.Show("布局加载成功!", "成功", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"加载失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        
+    }
+    
+    #endregion
+    
+    
+    
+    [RelayCommand]
+    private void OpenBoxSettings()
+    {
+        var settingsWindow = new SettingsWindow(this);
+        settingsWindow.ShowDialog();
+    }
+    
+
     
  #region 拖放处理（支持多选）
     
@@ -128,7 +237,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         if (source is IList list) list.Remove(item);
         
         // 添加到目标集合
-        if (!Icon.Contains(item)) Icon.Add(item);
+        if (!Icons.Contains(item)) Icons.Add(item);
     }
     
     #endregion

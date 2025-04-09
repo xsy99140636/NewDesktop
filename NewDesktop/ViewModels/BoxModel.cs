@@ -34,13 +34,7 @@ public partial class BoxModel : ObservableObject, IDropTarget
         get => Model.Y;
         set => SetProperty(Model.Y, value, Model, (m, v) => m.Y = v);
     }
-
-    public double Width
-    {
-        get => Model.Width;
-        set => SetProperty(Model.Width, value, Model, (m, v) => m.Width = v);
-    }
-
+    
     public double Height
     {
         get => Model.Height;
@@ -53,6 +47,12 @@ public partial class BoxModel : ObservableObject, IDropTarget
         }
     }
     
+    public double Width
+    {
+        get => Model.Width;
+        set => SetProperty(Model.Width, value, Model, (m, v) => m.Width = v);
+    }
+    
     public string Name
     {
         get => Model.Name;
@@ -62,7 +62,20 @@ public partial class BoxModel : ObservableObject, IDropTarget
     public double HeadHeight
     {
         get => Model.HeadHeight;
-        set => SetProperty(Model.HeadHeight, value, Model, (m, v) => m.HeadHeight = v);
+        set
+        {
+            if (!SetProperty(Model.HeadHeight, value, Model, (m, v) => m.HeadHeight = v)) return;
+            if (IsExpanded == false)
+            {
+                Height1 = value; // 同步更新Height1
+            }
+        }
+    }
+
+    public bool? IsExpanded
+    {
+        get => Model.IsExpanded;
+        set => SetProperty(Model.IsExpanded, value, Model, (m, v) => m.IsExpanded = v);
     }
     
     #endregion

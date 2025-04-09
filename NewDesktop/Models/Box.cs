@@ -21,6 +21,12 @@ public partial class Box : PositionedObject
     private double _headHeight = 24;
     
     /// <summary>
+    /// 是否折叠
+    /// </summary>
+    [ObservableProperty]
+    private bool? _isExpanded = true;
+    
+    /// <summary>
     /// 子项数据
     /// </summary>
     [ObservableProperty]
