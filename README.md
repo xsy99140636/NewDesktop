@@ -4,25 +4,31 @@
 # 文件结构
 ```
 NewDesktop/
-├── Behaviors/                # 自定义交互行为
-│   └── DragBehavior.cs       # 盒子拖拽行为实现类
-├── Models/                   # 数据模型层
+├── Behaviors/                    # 自定义交互行为
+│   └── DragBehavior.cs           # 盒子拖拽行为实现类
+├── Models/                       # 数据模型层
 │   ├── Box.cs
 │   ├── Icon.cs
 │   └── PositionedObject.cs
 ├── Styles
-│   ├── Dictionary.xaml       # 滚动条样式
-│   └── ListViewStyle.xaml    # listView样式
-├── ViewModels/               # 视图模型层
+│   ├── Dictionary.xaml           # 滚动条样式
+│   └── ListViewStyle.xaml        # listView样式
+├── ViewModels/                   # 视图模型层
 │   ├── BoxModel.cs
 │   ├── IconModel.cs
 │   └── MainViewModel.cs
-├── Views/                    # 视图层
-│   ├── BoxView.xaml          # 盒子控件
-│   ├── IconView.xaml         # 图标控件  
-│   └── UserControl1.xaml     # [临时文件]
-├── App.xaml                  # 应用入口
-└── MainWindow.xaml.cs        # 窗口扩展逻辑（桌面嵌入建议暂时禁用）
+├── Views/                        # 视图层
+│   ├── BoxView.xaml              # 盒子控件
+│   │   └── BoxView.xaml.cs
+│   ├── IconView.xaml             # 图标控件
+│   │   └── IconView.xaml.cs
+│   └── UserControl1.xaml         # [临时文件]
+│       └── UserControl1.xaml.cs
+├── App.xaml                      # 应用入口
+├── MainWindow.xaml               # 主窗口
+│   └── MainWindow.xaml.cs        # 窗口扩展逻辑（桌面嵌入建议暂时禁用）
+└── SettingsWindow.xaml           # 设置窗口
+    └── SettingsWindow.xaml.cs
 ```
 # 计划表
 
@@ -33,5 +39,5 @@ NewDesktop/
 | 整理盒子拖动改变大小功能 | 100% | 已经可用                 |
 | 图标控件         | 50%  | 文字等需添加               |
 | 图标控件拖动改变位置功能 | 90%  | 已经可用，支持多个同时拖动，但画布拖动受透明度影响，待解决 |
-| 布局保存加载功能     | 50%  | 施工中                  |
+| 布局保存加载功能     | 100%  | 已经可用                  |
 | 桌面文件监视功能     | 0%   |                      |
