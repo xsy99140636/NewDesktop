@@ -189,10 +189,10 @@ public partial class BoxView
         double marginTotal = MARGIN_SIZE + boxModel.HeadHeight;
 
         // 应用尺寸约束
-        var newHeight = ApplySizeConstraint(rawHeight, SNAP_UNIT, marginTotal);
+        var newHeight = ApplySizeConstraint(rawHeight, SNAP_UNIT+16, marginTotal);
 
         // 确保不小于最小尺寸
-        newHeight = Math.Max(newHeight, SNAP_UNIT + marginTotal);
+        newHeight = Math.Max(newHeight, SNAP_UNIT + marginTotal + 16);
 
         // 计算实际高度变化量
 

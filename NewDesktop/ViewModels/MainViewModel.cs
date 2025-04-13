@@ -24,7 +24,114 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     
     [ObservableProperty]
     private ObservableCollection<IconModel> _icons = new();
+
+    string defaultLayoutPath = "桌面布局.json";
+
+    public MainViewModel()
+    {
+        // 初始化时尝试加载默认布局
+        InitializeLayout();
+    }
     
+    /// <summary>
+    /// 初始化布局 - 加载保存的布局并同步桌面文件
+    /// </summary>
+    private void InitializeLayout()
+    {
+        
+        try
+        {
+            // 如果存在保存的布局则加载
+            if (File.Exists(defaultLayoutPath))
+            {
+                LoadLayout(defaultLayoutPath);
+            }
+
+            // 获取桌面文件
+            var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var desktopFiles = Directory.GetFiles(desktopPath).ToList();
+            //.Where(f => !f.EndsWith(".lnk")) // 排除快捷方式
+            //.ToList()
+
+            // 同步处理
+            SyncWithDesktopFiles(desktopFiles);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"初始化布局失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    /// <summary>
+    /// 同步桌面文件与现有图标数据
+    /// </summary>
+    private void SyncWithDesktopFiles(List<string> desktopFiles)
+    {
+        try
+        {
+            // 1. 合并所有图标来源（主集合+所有盒子）
+            var allIcons = Icons
+                .Concat(Entities.SelectMany(box => box.IconModels))
+                .ToList();
+
+            // 2. 处理已删除文件（从所有位置移除）
+            var iconsToRemove = allIcons
+                .Where(i => !string.IsNullOrEmpty(i.Path) && !File.Exists(i.Path))
+                .ToList();
+
+            foreach (var icon in iconsToRemove)
+            {
+                // 从主集合移除
+                if (Icons.Contains(icon))
+                    Icons.Remove(icon);
+
+                // 从所属盒子移除
+                foreach (var box in Entities.Where(b => b.IconModels.Contains(icon)))
+                {
+                    box.IconModels.Remove(icon);
+                    // box.Model.Products.Remove(icon.Model);
+                }
+            }
+
+            // 3. 创建现有路径集合（包含所有有效图标）
+            var existingPaths = allIcons
+                .Except(iconsToRemove)
+                .Select(i => i.Path)
+                .Where(p => !string.IsNullOrEmpty(p))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            // 4. 添加新文件图标
+            foreach (var filePath in desktopFiles)
+            {
+                if (!existingPaths.Contains(filePath))
+                {
+                    var fileName = Path.GetFileNameWithoutExtension(filePath);
+                    var newIcon = new Icon
+                    {
+                        X = Random.Shared.Next(50, 1000),
+                        Y = Random.Shared.Next(50, 600),
+                        Name = fileName,
+                        Path = filePath,
+                        Stock = 1,
+                    };
+
+                    var iconModel = new IconModel(newIcon)
+                    {
+                        JumboIcon = IconExtractor.GetIcon(filePath)
+                    };
+
+                    Icons.Add(iconModel); // 添加到主集合
+                }
+            }
+
+            SaveLayout(defaultLayoutPath);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"同步失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
     /// <summary>
     /// 添加新盒子到随机位置
     /// </summary>
@@ -35,7 +142,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         {
             X = Random.Shared.Next(0, 800),
             Y = Random.Shared.Next(0, 600),
-            Name = $"盒子{Enumerable.OfType<BoxModel>(Entities).Count() + 1}"
+            Name = $"盒子{Enumerable.OfType<BoxModel>(Entities).Count() + 1}",
         };
         Entities.Add(new BoxModel(shelf));
     }
@@ -92,6 +199,8 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         {
             LoadLayout(openFileDialog.FileName);
         }
+
+        SaveLayout(defaultLayoutPath);
     }
     
     /// <summary>
@@ -102,8 +211,23 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     {
         try
         {
+            var ee = Entities;
+            
+            foreach (var boxModel in ee)
+            {
+                // 清空原有图标
+                boxModel.Model.Icons.Clear();
+            
+                // 添加当前 IconModels 中的图标（转换为 Icon 对象）
+                foreach (var iconModel in boxModel.IconModels)
+                {
+                    boxModel.Model.Icons.Add(iconModel.Model);
+                }
+            }
+                
             var data = new
             {
+                
                 Boxes = Entities.Select(b => b.Model),
                 Icons = Icons.Select(i => i.Model)
             };
@@ -139,6 +263,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
                 foreach (var boxJson in data.Boxes)
                 {
                     var box = JsonConvert.DeserializeObject<Box>(boxJson.ToString());
+
                     Entities.Add(new BoxModel(box));
                 }
             }
@@ -149,7 +274,10 @@ public partial class MainViewModel : ObservableObject, IDropTarget
                 foreach (var iconJson in data.Icons)
                 {
                     var icon = JsonConvert.DeserializeObject<Icon>(iconJson.ToString());
-                    Icons.Add(new IconModel(icon));
+                    
+                    var iconModel = new IconModel(icon);
+                    iconModel.JumboIcon = IconExtractor.GetIcon(iconModel.Path);
+                    Icons.Add(iconModel);
                 }
             }
             
@@ -164,16 +292,12 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     
     #endregion
     
-    
-    
     [RelayCommand]
     private void OpenBoxSettings()
     {
         var settingsWindow = new SettingsWindow(this);
         settingsWindow.ShowDialog();
     }
-    
-
     
  #region 拖放处理（支持多选）
     
@@ -186,7 +310,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         if (isSingleValid || isMultipleValid)
         {
             dropInfo.Effects = DragDropEffects.Move;
-            dropInfo.DestinationText = "放置到桌面";
+            dropInfo.DestinationText = "桌面";
             
             // 设置拖动时的偏移量（使图标跟随鼠标中心）
             // dropInfo.DragInfo.DragStartOffset = new Point(32, 32);

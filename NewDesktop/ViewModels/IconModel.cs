@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GongSolutions.Wpf.DragDrop;
 using NewDesktop.Models;
@@ -15,6 +17,9 @@ public partial class IconModel : ObservableObject, IDragSource
     [ObservableProperty]
     private Icon _model;
 
+    [ObservableProperty]
+    private ImageSource  _jumboIcon;
+    
     #region 属性绑定
 
     public string Name

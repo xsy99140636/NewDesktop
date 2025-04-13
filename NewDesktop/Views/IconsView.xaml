@@ -5,13 +5,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              mc:Ignorable="av" 
              x:Class="NewDesktop.Views.IconView"
-             av:DesignHeight="64" av:DesignWidth="64">
-
-    <Border Background="White" CornerRadius="4" Margin="10">
-        <StackPanel Margin="5">
-            <TextBlock Text="{Binding Name}"/>
-            <TextBlock Text="{Binding Stock}" Margin="10,0,0,0"/>
-        </StackPanel>
-    </Border>
-
+             av:DesignHeight="80" av:DesignWidth="64">
+    <Grid>
+        <Border CornerRadius="4" Margin="10" VerticalAlignment="Top" Height="44" Width="44">
+            <Border.Background>
+                <ImageBrush ImageSource="{Binding JumboIcon}"/>
+            </Border.Background>
+            
+        </Border>
+        <TextBlock Text="{Binding Name}" Grid.Row="1" FontSize="9" TextWrapping="Wrap" TextAlignment="Center" Height="24" VerticalAlignment="Bottom"/>
+    </Grid>
 </UserControl>

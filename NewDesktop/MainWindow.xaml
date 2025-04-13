@@ -45,7 +45,7 @@
 
             <ListView.Resources>
                 <DataTemplate DataType="{x:Type viewModels:IconModel}">
-                    <views1:IconView Width="64" Height="64"/><!-- Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" -->
+                    <views1:IconView Width="64" Height="80"/><!-- Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" -->
                 </DataTemplate>
             </ListView.Resources>
             <!-- -->

@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Windows.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace NewDesktop.Models;
 
@@ -18,6 +19,4 @@ public partial class Icon : PositionedObject
     //[NotifyPropertyChangedFor(nameof(DisplayName))] // 当名称变化时通知显示名称
     private string _path = "";
     
-    // 示例计算属性
-    // public string DisplayName => $"{Name} (库存:{Stock})";
 }

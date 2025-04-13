@@ -30,6 +30,6 @@ public partial class Box : PositionedObject
     /// 子项数据
     /// </summary>
     [ObservableProperty]
-    private ObservableCollection<Icon> _products = [];
+    private ObservableCollection<Icon> _icons = [];
 
 }

@@ -35,7 +35,7 @@
             </Border>
 
             <!-- 主体内容 -->
-            <ListView ItemsSource="{Binding Icon}" 
+            <ListView ItemsSource="{Binding IconModels}" 
                       Margin="7,0,3,7"
                       Grid.Row="1"
                       Style="{StaticResource CustomListViewStyle}"
@@ -44,7 +44,7 @@
                       dd:DragDrop.IsDragSource="True"
                       dd:DragDrop.IsDropTarget="True"
                       dd:DragDrop.DragHandler="{Binding}"
-                      dd:DragDrop.DropHandler="{Binding}"
+
                       dd:DragDrop.UseDefaultEffectDataTemplate="True"
                       dd:DragDrop.UseDefaultDragAdorner="True"
                       BorderBrush="{x:Null}"
@@ -59,7 +59,7 @@
 
                 <ListView.ItemTemplate>
                     <DataTemplate DataType="{x:Type viewModels:IconModel}" >
-                        <views1:IconView Width="64" Height="64" />
+                        <views1:IconView Width="64" Height="80" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
 
