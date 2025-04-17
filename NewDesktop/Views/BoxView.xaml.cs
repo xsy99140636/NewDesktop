@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using CommunityToolkit.Mvvm.Input;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -9,6 +11,8 @@ namespace NewDesktop.Views;
 
 public partial class BoxView
 {
+
+
     // 调整手柄数组
     private readonly Thumb[] _resizeThumbs;
     
@@ -27,14 +31,34 @@ public partial class BoxView
         InitializeComponent();
         // 初始化调整手柄数组（按顺序存储八个方向的手柄）
         _resizeThumbs = [Resize_L, Resize_R, Resize_T, Resize_B, Resize_T_L, Resize_T_R, Resize_B_L, Resize_B_R];InitializeResizeHandlers();
+        DataContextChanged += OnDataContextChanged;
     }
-    
+
+
+
+    private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (e.OldValue is BoxModel oldVm)
+        {
+            //oldVm.PropertyChanged -= VmPropertyChanged;
+        }
+
+        if (e.NewValue is BoxModel newVm)
+        {
+            //newVm.PropertyChanged += VmPropertyChanged;
+        }
+    }
+
     #region 折叠/展开功能
-    
-    private void ToggleButton_Click(object sender, RoutedEventArgs e)
+    //private void cc(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    //{
+
+    //}
+    private void cc(object sender, MouseButtonEventArgs e)
     {
         if (!(DataContext is BoxModel iconData)) return;
-        
+        //if (e.PropertyName == nameof(BoxModel.IsExpanded) && DataContext is BoxModel iconData) { 
+
         if (iconData.IsExpanded == true)
         {
             // 禁用动画期间的手柄操作
@@ -92,32 +116,32 @@ public partial class BoxView
             BeginAnimation(HeightProperty, animation1);
             return;
         }
-        // if (_isExpanded)
-        // {
-        //     // 保存实际内容高度（排除标题栏）
-        //     _expandedHeight = iconData.Height;
-        //
-        //     // 直接设置高度（不通过动画）
-        //     iconData.Height = 24;
-        //     // ContentScroll.Visibility = Visibility.Collapsed;
-        //     foreach (var thumb in _resizeThumbs)
-        //     {
-        //         thumb.IsEnabled = false;
-        //     }
-        // }
-        // else
-        // {
-        //     // 恢复高度并显示内容
-        //     iconData.Height = _expandedHeight;
-        //     // ContentScroll.Visibility = Visibility.Visible;
-        //     foreach (var thumb in _resizeThumbs)
-        //     {
-        //         thumb.IsEnabled = true;
-        //     }
-        // }
+            // if (_isExpanded)
+            // {
+            //     // 保存实际内容高度（排除标题栏）
+            //     _expandedHeight = iconData.Height;
+            //
+            //     // 直接设置高度（不通过动画）
+            //     iconData.Height = 24;
+            //     // ContentScroll.Visibility = Visibility.Collapsed;
+            //     foreach (var thumb in _resizeThumbs)
+            //     {
+            //         thumb.IsEnabled = false;
+            //     }
+            // }
+            // else
+            // {
+            //     // 恢复高度并显示内容
+            //     iconData.Height = _expandedHeight;
+            //     // ContentScroll.Visibility = Visibility.Visible;
+            //     foreach (var thumb in _resizeThumbs)
+            //     {
+            //         thumb.IsEnabled = true;
+            //     }
+            // }
         
-        Debug.WriteLine($"现在: {iconData.Height}");
-    }
+        Debug.WriteLine($"现在: {iconData.Height}");}
+    //}
     #endregion
     
     #region 尺寸调整功能
@@ -223,4 +247,6 @@ public partial class BoxView
         return Math.Round((rawSize - margin) / unit) * unit + margin;
     }
     #endregion
+
+
 }

@@ -4,6 +4,7 @@
         xmlns:dd="urn:gong-wpf-dragdrop"
         xmlns:views1="clr-namespace:NewDesktop.Views"
         xmlns:viewModels="clr-namespace:NewDesktop.ViewModels"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         WindowStyle="None"
         ResizeMode="NoResize"
         AllowsTransparency="True"
@@ -18,7 +19,7 @@
         <viewModels:MainViewModel/>
     </Window.DataContext>
 
-    <Grid Background="Wheat">
+    <Grid Background="#02FFFFFF">
         <!-- 显示 -->
         <ListView ItemsSource="{Binding Icons}"
                   Style="{StaticResource CustomListViewStyle}"
@@ -26,9 +27,22 @@
                   dd:DragDrop.IsDropTarget="True"
                   dd:DragDrop.DropHandler="{Binding }"
                   dd:DragDrop.UseDefaultDragAdorner="True"
-                  dd:DragDrop.UseDefaultEffectDataTemplate="True" Background="Transparent">
+                  dd:DragDrop.UseDefaultEffectDataTemplate="True" Background="Transparent"
+                  >
             <!-- dd:DragDrop.DragHandler="{Binding }" -->
-
+            
+            
+            
+            
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseRightButtonUp">
+                    <i:InvokeCommandAction 
+                        Command="{Binding RightClickCommand}"
+                        CommandParameter="{Binding SelectedItems, RelativeSource={RelativeSource AncestorType=ListView}}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            
+            
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas  Background="Transparent"/><!-- Canvas布局容器 -->
@@ -36,10 +50,10 @@
             </ListView.ItemsPanel>
 
             <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem"
-                       BasedOn="{StaticResource CustomListViewItemStyle}">
+                <Style TargetType="ListViewItem" BasedOn="{StaticResource CustomListViewItemStyle}">
                     <Setter Property="Canvas.Left" Value="{Binding X, Mode=TwoWay}"/>
                     <Setter Property="Canvas.Top" Value="{Binding Y, Mode=TwoWay}"/>
+                    
                 </Style>
             </ListView.ItemContainerStyle>
 

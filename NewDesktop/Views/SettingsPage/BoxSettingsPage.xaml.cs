@@ -25,10 +25,5 @@ namespace NewDesktop.Views.SettingsPage
         {
             InitializeComponent();
         }
-
-        private void ColorPickerUserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }

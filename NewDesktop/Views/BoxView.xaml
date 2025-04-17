@@ -23,9 +23,10 @@
             </Grid.RowDefinitions>
 
             <!-- 标题栏（点击触发折叠） -->
-            <Border Grid.Row="0" MouseLeftButtonDown="ToggleButton_Click" Background="Transparent" >
+            <Border Grid.Row="0"  Background="Transparent" >
                 <!-- 拖动块 -->
                 <i:Interaction.Behaviors>
+                    <behaviors:DoubleClickBehavior MouseDown="cc" />
                     <behaviors:DragBehavior/>
                 </i:Interaction.Behaviors>
                 

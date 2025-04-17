@@ -109,7 +109,7 @@
                             </ComboBox>
                         </Grid>
                     </Expander.Header>
-                    <Views:ColorPickerUserControl Width="500" Height="200" HorizontalAlignment="Left" Loaded="ColorPickerUserControl_Loaded" VerticalAlignment="Center" Margin="42,0,0,0" />
+                    <Views:ColorPickerUserControl Width="500" Height="200" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="42,0,0,0" />
                 </Expander>
                 
                 <TextBlock Text="颜色" Style="{StaticResource BodyTextBlockStyle}" Margin="1,30,0,6" />

@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GongSolutions.Wpf.DragDrop;
 using NewDesktop.Models;
+using NewDesktop.Module;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
@@ -79,7 +81,7 @@ public partial class BoxModel : ObservableObject, IDropTarget
         set
         {
             if (!SetProperty(Model.HeadHeight, value, Model, (m, v) => m.HeadHeight = v)) return;
-            if (IsExpanded == false)
+            if (IsExpanded == true)
             {
                 Height1 = value; // 同步更新Height1
             }
@@ -101,14 +103,21 @@ public partial class BoxModel : ObservableObject, IDropTarget
         foreach (var product in _model.Icons)
         {
             var iconModel = new IconModel(product);
-            iconModel.JumboIcon = IconExtractor.GetIcon(iconModel.Path);
+            // iconModel.JumboIcon = IconExtractor.GetIcon(iconModel.Path);
+            iconModel.JumboIcon = IconGet.GetThumbnail(iconModel.Path);
             IconModels.Add(iconModel);
             //Icon.Add(new IconModel(product));
         }
+        if (IsExpanded == true) 
+        {
         _height1 = model.Height; // 初始化 Height1
-        
+        }
+        else 
+        {
+            _height1 = model.HeadHeight; 
+        }
     }
-    
+
     #region 拖动处理
 
     /// <summary>

@@ -1,13 +1,29 @@
-﻿using System.Collections;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GongSolutions.Wpf.DragDrop;
-using Microsoft.Win32;
-using Newtonsoft.Json;
 using NewDesktop.Models;
+using NewDesktop.Module;
+using Newtonsoft.Json;
+using System.Collections;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Net.Mime;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
+using System.Windows.Input;
+using System.Windows.Interop;
+using NewDesktop.Shell;
+using NewDesktop.Shell.Interop;
+using Application = System.Windows.Application;
+using Cursors = System.Windows.Forms.Cursors;
+using DragDropEffects = System.Windows.DragDropEffects;
+using IDropTarget = GongSolutions.Wpf.DragDrop.IDropTarget;
+using MessageBox = System.Windows.MessageBox;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
 namespace NewDesktop.ViewModels;
 
@@ -25,13 +41,48 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     [ObservableProperty]
     private ObservableCollection<IconModel> _icons = new();
 
-    string defaultLayoutPath = "桌面布局.json";
+    private readonly string _defaultLayoutPath = "桌面布局.json";
 
     public MainViewModel()
     {
         // 初始化时尝试加载默认布局
         InitializeLayout();
     }
+
+    
+    
+    
+// 在 MainViewModel 类中添加
+    [RelayCommand]
+    private void RightClick(IList selectedItems)
+    {
+        if (selectedItems == null) return;
+
+        // 转换为 IconModel 并过滤有效路径
+        var items = selectedItems
+            .Cast<IconModel>()
+            .Where(icon => !string.IsNullOrEmpty(icon.Path) && 
+                           (File.Exists(icon.Path) || Directory.Exists(icon.Path)))
+            .Select(i => i.Path)
+            .ToArray(); // 关键转换：IEnumerable<string> => string[]
+
+        if (items.Length == 0) return;
+
+        // 获取鼠标屏幕坐标
+        // if (!GetCursorPos(out POINT cursorPos)) return;
+        // 使用更现代的坐标获取方式
+        var mousePosition = System.Windows.Forms.Control.MousePosition;
+        var mousePoint = new Point(mousePosition.X, mousePosition.Y);
+        
+        // 获取窗口句柄
+        // 获取主窗口句柄
+        var mainWindow = Application.Current.MainWindow; // 修复此处
+        var handle = new WindowInteropHelper(mainWindow).Handle;
+
+        // 显示系统右键菜单
+        DesktopAttacher.ShowContextMenu(items, mousePoint, handle);
+    }
+    
     
     /// <summary>
     /// 初始化布局 - 加载保存的布局并同步桌面文件
@@ -42,14 +93,15 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         try
         {
             // 如果存在保存的布局则加载
-            if (File.Exists(defaultLayoutPath))
+            if (File.Exists(_defaultLayoutPath))
             {
-                LoadLayout(defaultLayoutPath);
+                LoadLayout(_defaultLayoutPath);
             }
 
             // 获取桌面文件
             var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var desktopFiles = Directory.GetFiles(desktopPath).ToList();
+            // var desktopFiles = Directory.GetFiles(desktopPath).ToList();
+            var desktopFiles = Directory.GetFileSystemEntries(desktopPath).ToList();
             //.Where(f => !f.EndsWith(".lnk")) // 排除快捷方式
             //.ToList()
 
@@ -76,7 +128,10 @@ public partial class MainViewModel : ObservableObject, IDropTarget
 
             // 2. 处理已删除文件（从所有位置移除）
             var iconsToRemove = allIcons
-                .Where(i => !string.IsNullOrEmpty(i.Path) && !File.Exists(i.Path))
+                .Where(i => string.IsNullOrEmpty(i.Path))
+                .GroupBy(i => i.Path, StringComparer.OrdinalIgnoreCase)
+                .Where(g => !File.Exists(g.Key) && !Directory.Exists(g.Key))
+                .SelectMany(g => g)  // 展开所有匹配的组
                 .ToList();
 
             foreach (var icon in iconsToRemove)
@@ -89,7 +144,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
                 foreach (var box in Entities.Where(b => b.IconModels.Contains(icon)))
                 {
                     box.IconModels.Remove(icon);
-                    // box.Model.Products.Remove(icon.Model);
+                     //box.Model.Products.Remove(icon.Model);
                 }
             }
 
@@ -117,14 +172,15 @@ public partial class MainViewModel : ObservableObject, IDropTarget
 
                     var iconModel = new IconModel(newIcon)
                     {
-                        JumboIcon = IconExtractor.GetIcon(filePath)
+                        //JumboIcon = IconExtractor.GetIcon(filePath)
+                        JumboIcon =  IconGet.GetThumbnail(filePath)
                     };
 
                     Icons.Add(iconModel); // 添加到主集合
                 }
             }
 
-            SaveLayout(defaultLayoutPath);
+            SaveLayout(_defaultLayoutPath);
         }
         catch (Exception ex)
         {
@@ -200,7 +256,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
             LoadLayout(openFileDialog.FileName);
         }
 
-        SaveLayout(defaultLayoutPath);
+        SaveLayout(_defaultLayoutPath);
     }
     
     /// <summary>
@@ -228,7 +284,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
             var data = new
             {
                 
-                Boxes = Entities.Select(b => b.Model),
+                Boxes = ee.Select(b => b.Model),
                 Icons = Icons.Select(i => i.Model)
             };
 
@@ -276,7 +332,8 @@ public partial class MainViewModel : ObservableObject, IDropTarget
                     var icon = JsonConvert.DeserializeObject<Icon>(iconJson.ToString());
                     
                     var iconModel = new IconModel(icon);
-                    iconModel.JumboIcon = IconExtractor.GetIcon(iconModel.Path);
+                    //iconModel.JumboIcon = IconExtractor.GetIcon(iconModel.Path);
+                    iconModel.JumboIcon = IconGet.GetThumbnail(iconModel.Path);
                     Icons.Add(iconModel);
                 }
             }

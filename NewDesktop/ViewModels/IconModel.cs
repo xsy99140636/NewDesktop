@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GongSolutions.Wpf.DragDrop;
 using NewDesktop.Models;
 
@@ -55,7 +57,7 @@ public partial class IconModel : ObservableObject, IDragSource
     #endregion
     
     // 构造函数增加父集合参数
-    public IconModel(Icon model, ObservableCollection<object> parent = null)
+    public IconModel(Icon model)
     {
         _model = model;
     }
@@ -65,15 +67,42 @@ public partial class IconModel : ObservableObject, IDragSource
     //     _model = model;
     // }
 
+    [RelayCommand]
+    private void HandleDoubleClick()
+    {
+        if (string.IsNullOrWhiteSpace(Model.Path))
+            return;
 
+        try
+        {
+            // 方式1：使用 ProcessStartInfo（推荐，更安全可控）
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = Model.Path,      // 文件路径
+                UseShellExecute = true,      // 使用系统 Shell 打开（关联程序）
+                Verb = "open"                // 指定操作为"打开"
+            };
+            System.Diagnostics.Process.Start(startInfo);
+
+            // 方式2：简洁写法（仅适用于 .NET Core 3.1+）
+            // System.Diagnostics.Process.Start(new ProcessStartInfo(Model.Path) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            // 处理异常（如文件不存在、无关联程序等）
+            Debug.WriteLine($"打开文件失败: {ex.Message}");
+            // 可选：显示错误提示
+            MessageBox.Show($"无法打开文件: {Model.Path}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+    
     #region 拖动
 
     // 开始拖动时的初始化操作
     public void StartDrag(IDragInfo dragInfo)
     {
         // 获取所有选中的项（支持多选）
-        var selectedItems = dragInfo.SourceItems?.Cast<IconModel>().ToList() 
-                            ?? new List<IconModel> { this };
+        var selectedItems = dragInfo.SourceItems?.Cast<IconModel>().ToList() ?? new List<IconModel> { this };
         // 传递选中的集合
         dragInfo.Data = selectedItems.Count == 1 ? 
             selectedItems.First() : 
