@@ -1,6 +1,6 @@
 # NewDesktop
 这是一个基于WPF的桌面重写计划，是个桌面整理软件加美化软件，计划在最大限度保留原生体验的前提下加点东西。
-![image](https://github.com/Yeilintong/NewDesktop/blob/main/Image/YL1.png)
+![image](https://github.com/Yeilintong/NewDesktop/blob/main/Image/YL2.png)
 # 文件结构
 ```
 NewDesktop/
