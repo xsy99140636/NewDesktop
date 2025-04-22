@@ -1,0 +1,96 @@
+﻿<UserControl x:Class="NewDesktop.Views.BoxView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:av="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dd="urn:gong-wpf-dragdrop"
+    xmlns:views1="clr-namespace:NewDesktop.Views"
+    xmlns:viewModels="clr-namespace:NewDesktop.ViewModels"
+    xmlns:behaviors="clr-namespace:NewDesktop.Behaviors"
+    mc:Ignorable="av" 
+    Height="{Binding Height1}" av:DesignWidth="320"
+    Width="{Binding Width}" av:DesignHeight="320">
+
+    <Border CornerRadius="{Binding Corner}" >
+        <Border.Background>
+            <!-- <SolidColorBrush Color="{Binding Color}"/> -->
+            <SolidColorBrush Color="{Binding BoxColor}"/>
+        </Border.Background>
+        
+        
+        <Grid>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="{Binding HeadHeight}"/>
+                <!-- 固定标题行 -->
+                <RowDefinition Height="*"/>
+                <!-- 可折叠内容行 -->
+            </Grid.RowDefinitions>
+
+            <!-- 标题栏（点击触发折叠） -->
+            <Border Grid.Row="0"  Background="Transparent" >
+                <!-- 拖动块 -->
+                <i:Interaction.Behaviors>
+                    <behaviors:DoubleClickBehavior MouseDown="cc" />
+                    <behaviors:DragBehavior/>
+                </i:Interaction.Behaviors>
+                
+                <Viewbox >
+                    <TextBlock Text="{Binding Name}" FontFamily="Segoe UI"/>
+                </Viewbox>
+            </Border>
+
+            <!-- 主体内容 -->
+            <ListView ItemsSource="{Binding IconModels}" 
+                      Margin="7,0,3,7"
+                      Grid.Row="1"
+                      Style="{StaticResource CustomListViewStyle}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                      dd:DragDrop.IsDragSource="True"
+                      dd:DragDrop.IsDropTarget="True"
+                      dd:DragDrop.DragHandler="{Binding}"
+                      dd:DragDrop.UseDefaultEffectDataTemplate="True"
+                      dd:DragDrop.UseDefaultDragAdorner="True"
+                      BorderBrush="{x:Null}"
+                      BorderThickness="0,0,0,0">
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseRightButtonUp">
+                        <i:InvokeCommandAction 
+                            Command="{Binding RightClickCommand}"
+                            CommandParameter="{Binding SelectedItems, RelativeSource={RelativeSource AncestorType=ListView}}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <!-- WrapPanel布局容器 -->
+                        <WrapPanel Background="Transparent"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="{x:Type viewModels:IconModel}" >
+                        <views1:IconView Width="64" Height="80" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+
+            <!-- 手柄（拖动窗口用） -->
+            <Grid Grid.Row="0" Grid.RowSpan="2">
+                <Thumb x:Name="Resize_L"    Panel.ZIndex="1"    Width="3"             HorizontalAlignment="Left"                              Cursor="SizeWE"     Margin="0,4,0,4"  OpacityMask="#00000000"/>
+                <Thumb x:Name="Resize_R"    Panel.ZIndex="1"    Width="3"             HorizontalAlignment="Right"                             Cursor="SizeWE"     Margin="0,4,0,4"  OpacityMask="#00000000" />
+                <Thumb x:Name="Resize_T"    Panel.ZIndex="1"               Height="3"                             VerticalAlignment="Top"     Cursor="SizeNS"     Margin="4,0,4,0"  OpacityMask="#00000000"/>
+                <Thumb x:Name="Resize_B"    Panel.ZIndex="1"               Height="3"                             VerticalAlignment="Bottom"  Cursor="SizeNS"     Margin="4,0,4,0"  OpacityMask="#00000000"/>
+                <Thumb x:Name="Resize_T_L"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Left"  VerticalAlignment="Top"     Cursor="SizeNWSE"                     OpacityMask="#00000000"/>
+                <Thumb x:Name="Resize_T_R"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Right" VerticalAlignment="Top"     Cursor="SizeNESW"                     OpacityMask="#00000000"/>
+                <Thumb x:Name="Resize_B_L"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Left"  VerticalAlignment="Bottom"  Cursor="SizeNESW"                     OpacityMask="#00000000"/>
+                <Thumb x:Name="Resize_B_R"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Cursor="SizeNWSE"                     OpacityMask="#00000000"/>
+            </Grid>
+        </Grid>
+
+    </Border>
+</UserControl>

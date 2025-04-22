@@ -1,0 +1,77 @@
+﻿<Page x:Class="NewDesktop.Views.SettingsPage.ss"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:NewDesktop.Views.SettingsPage"
+      mc:Ignorable="d"
+      Title="ss" Height="450" Width="800">
+    <Page.Resources>
+        <Style x:Key="LinkTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,4,0,4" />
+        </Style>
+
+        <Style x:Key="DefaultHyperlinkStyle" TargetType="Hyperlink">
+            <Setter Property="TextDecorations" Value="None" />
+            <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorSecondaryBrush}" />
+                    <Setter Property="TextDecorations" Value="Underline" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </Page.Resources>
+
+    <Grid>
+
+
+        <ScrollViewer VerticalAlignment="Top">
+
+            <StackPanel MaxWidth="1000" Margin="36,0,36,0" >
+
+
+                <Expander Padding="16" IsExpanded="True">
+
+                    <Expander.Header>
+                        <StackPanel>
+                            <TextBlock Text="New" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Text="©" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+                    </Expander.Header>
+
+                    <Expander.Content>
+                        <Border Margin="-16" CornerRadius="4,4,4,4" Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
+                            <StackPanel>
+
+                                <Border BorderThickness="0,0,0,1" BorderBrush="#0F000000" Padding="58,0,16,0">
+                                    <Grid VerticalAlignment="Center">
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="依赖项和引用​" Style="{StaticResource BodyTextBlockStyle}" Margin="0,4,0,4"/>
+                                            <TextBlock Style="{StaticResource LinkTextBlockStyle}">
+                                                <Hyperlink NavigateUri="https://github.com/CommunityToolkit/dotnet" Style="{StaticResource DefaultHyperlinkStyle}">CommunityToolkit.Mvvm</Hyperlink>
+                                            </TextBlock>
+                                            <TextBlock Style="{StaticResource LinkTextBlockStyle}">
+                                                <Hyperlink NavigateUri="https://github.com/Microsoft/XamlBehaviorsWpf" Style="{StaticResource DefaultHyperlinkStyle}">Microsoft.Xaml.Behaviors.Wpf</Hyperlink>
+                                            </TextBlock>
+                                            <TextBlock Style="{StaticResource LinkTextBlockStyle}">
+                                                <Hyperlink NavigateUri="https://github.com/contre/Windows-API-Code-Pack-1.1" Style="{StaticResource DefaultHyperlinkStyle}">Microsoft-WindowsAPICodePack-Shell</Hyperlink>
+                                            </TextBlock>
+                                            <TextBlock Style="{StaticResource LinkTextBlockStyle}">
+                                                <Hyperlink NavigateUri="https://github.com/JamesNK/Newtonsoft.Json" Style="{StaticResource DefaultHyperlinkStyle}">Newtonsoft.Json</Hyperlink>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                            </StackPanel>
+                        </Border>
+                    </Expander.Content>
+                </Expander>
+            </StackPanel>
+        </ScrollViewer >
+
+
+    </Grid>
+</Page>
