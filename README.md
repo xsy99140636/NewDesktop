@@ -1,34 +1,51 @@
 # NewDesktop
 这是一个基于WPF的桌面重写计划，是个桌面整理软件加美化软件，计划在最大限度保留原生体验的前提下加点东西。
-![image](https://github.com/Yeilintong/NewDesktop/blob/main/Image/YL2.png)
+![image](https://github.com/Yeilintong/NewDesktop/blob/main/Image/YL3.png)
+![image](https://github.com/Yeilintong/NewDesktop/blob/main/Image/BS.png)
 # 文件结构
 ```
 NewDesktop/
-├── Behaviors/                    # 自定义交互行为
-│   └── DragBehavior.cs           # 盒子拖拽行为实现类
-├── Models/                       # 数据模型层
-│   ├── Box.cs
-│   ├── Icon.cs
-│   └── PositionedObject.cs
-├── Styles
-│   ├── Dictionary.xaml           # 滚动条样式
-│   └── ListViewStyle.xaml        # listView样式
-├── ViewModels/                   # 视图模型层
-│   ├── BoxModel.cs
-│   ├── IconModel.cs
-│   └── MainViewModel.cs
-├── Views/                        # 视图层
-│   ├── BoxView.xaml              # 盒子控件
-│   │   └── BoxView.xaml.cs
-│   ├── IconView.xaml             # 图标控件
-│   │   └── IconView.xaml.cs
-│   └── UserControl1.xaml         # [临时文件]
-│       └── UserControl1.xaml.cs
-├── App.xaml                      # 应用入口
-├── MainWindow.xaml               # 主窗口
-│   └── MainWindow.xaml.cs        # 窗口扩展逻辑（桌面嵌入建议暂时禁用）
-└── SettingsWindow.xaml           # 设置窗口
-    └── SettingsWindow.xaml.cs
+├── Behaviors/                                # 自定义交互行为
+│   ├── DoubleClickBehavior.cs                # 双击交互行为（打开/选择操作）
+│   └── DragBehavior.cs                       # 拖放功能实现（支持Canvas内元素拖拽和边缘吸附）
+├── Models/                                   # 数据模型
+│   ├── Box.cs                                # 盒子模型
+│   ├── Icon.cs                               # 图标模型
+│   └── PositionedObject.cs                   # 基类
+├── Services/                                 # 服务层
+│   └── SaveLoadService.cs                    # 保存加载
+├── Shell/                                    # 系统集成模块
+│   ├── ContextMenu.cs                        # 调用原生Windows Shell右键菜单（文件/文件夹）
+│   └── DesktopAttacher.cs                    # 窗口桌面附着器（将应用嵌入桌面层）
+├── Styles/                                   # 样式资源
+│   ├── Dictionary.xaml                       # 全局资源字典（滚动条样式）
+│   └── ListViewStyle.xaml                    # ListView样式
+├── ViewModels/                               # 视图模型
+│   ├── BoxModel.cs                           # 盒子视图模型
+│   ├── IconModel.cs                          # 图标视图模型
+│   └── MainViewModel.cs                      # 主视图模型
+├── Views/                                    # 视图层
+│   ├── Common/                               # 通用控件库
+│   │   └── ColorPickerUserControl.xaml.cs    # 颜色选择器控件
+│   ├── BoxView.xaml                          # 盒子控件
+│   │   └── BoxView.xaml.cs                   # 盒子控件后台逻辑
+│   ├── IconView.xaml                         # 图标控件
+│   │   └── IconView.xaml.cs                  # 图标控件后台逻辑
+│   └── SettingsPage/                         # 设置功能控件视图
+│       ├── BoxSettingsPage.xaml              # 盒子属性设置页
+│       │   └── BoxSettingsPage.xaml.cs
+│       ├── HomeSettingsPage.xaml             # 主界面设置页
+│       │   └── HomeSettingsPage.xaml.cs
+│       ├── ss.xaml                           # [待命名] 临时设置页
+│       │   └── ss.xaml.cs
+│       └── SaveSettingsPage.xaml             # 布局保存规则设置页
+│           └── SaveSettingsPage.xaml.cs
+├── App.xaml                                  # 应用入口
+│   └── App.xaml.cs
+├── MainWindow.xaml                           # 主窗口（承载桌面画布）
+│   └── MainWindow.xaml.cs                    # 窗口扩展逻辑
+└── SettingsWindow.xaml                       # 独立设置窗口
+    └── SettingsWindow.xaml.cs                # 设置窗口逻辑（导航框架管理）
 ```
 # 计划表
 
