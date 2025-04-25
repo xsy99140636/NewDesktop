@@ -1,18 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using GongSolutions.Wpf.DragDrop;
 using NewDesktop.Models;
+using NewDesktop.Services;
+using NewDesktop.Shell;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
-using NewDesktop.Services;
-using NewDesktop.Shell;
-
-
-
-
+using System.Windows.Media;
+using static NewDesktop.Behaviors.IconDragDropBehavior;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
@@ -21,7 +19,7 @@ namespace NewDesktop.ViewModels;
 /// <summary>
 /// 主视图模型 - 管理系统所有实体
 /// </summary>
-public partial class MainViewModel : ObservableObject, IDropTarget
+public partial class MainViewModel : ObservableObject//, IDropTarget
 {
     [ObservableProperty]
     private ObservableCollection<BoxModel> _entities = new();
@@ -281,66 +279,61 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         
     #region 拖放处理
     
-    public void DragOver(IDropInfo dropInfo)
+    [RelayCommand]
+    private void HandleDrop(DropCommandData dropData)
     {
-        bool isSingleValid = dropInfo.Data is IconModel || dropInfo.Data is Icon;
-        bool isMultipleValid = dropInfo.Data is IEnumerable items && items.Cast<object>().All(x => x is IconModel);
+        // if (dropData.sender is not ListView listView) return;
+        if (dropData.sender is not ListView targetListView) return;
+        if (!dropData.e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+        
+        // 查找目标ListView内部的Canvas
+        var canvas = FindVisualChild<Canvas>(targetListView);
+        if (canvas == null) return;
 
-        if (isSingleValid || isMultipleValid)
+        // 获取相对于Canvas的鼠标位置
+        Point dropPosition = dropData.e.GetPosition(canvas);
+        
+        // 处理文件拖放逻辑
+        if (dropData.e.Data.GetDataPresent(DataFormats.FileDrop))
         {
-            dropInfo.Effects = DragDropEffects.Move;
-            dropInfo.DestinationText = "桌面";
-            
-            // 设置拖动时的偏移量（使图标跟随鼠标中心）
-            // dropInfo.DragInfo.DragStartOffset = new Point(32, 32);
-
-        }
-    }
-    
-    /// <summary>
-    /// 拖拽释放时的处理逻辑（完成数据转移）
-    /// </summary>
-    /// <param name="dropInfo">拖拽信息对象</param>
-    public void Drop(IDropInfo dropInfo)
-    {
-        // 处理多选拖动
-        if (dropInfo.Data is IconModel singleItem)
-        {
-            MoveItem(singleItem, dropInfo.DragInfo.SourceCollection);
-            // 更新位置
-            // UpdateItemPosition(item, dropInfo.DropPosition);
-            singleItem.X = dropInfo.DropPosition.X - 32;  // 假设图标尺寸64x64，居中偏移
-            singleItem.Y = dropInfo.DropPosition.Y - 32;
-        }
-        // 处理单选拖动
-        else if (dropInfo.Data is IEnumerable multipleItems)
-        {
-            var offset = 0;
-            // HandleMultipleItemsDrop(multipleItems.Cast<IconModel>(), dropInfo);
-            foreach (IconModel item in multipleItems.Cast<IconModel>().ToList())
+            var files = (string[])dropData.e.Data.GetData(DataFormats.FileDrop);
+            foreach (var file in files)
             {
-                MoveItem(item, dropInfo.DragInfo.SourceCollection);
-                // 更新位置
-                // UpdateItemPosition(item, dropInfo.DropPosition);
-                item.X = dropInfo.DropPosition.X - 32 - offset;  // 假设图标尺寸64x64，居中偏移
-                item.Y = dropInfo.DropPosition.Y - 32 - offset;
-                offset += 20;
+                var product = new Icon
+                {
+                    X = dropPosition.X,
+                    Y = dropPosition.Y,
+                    Name = Path.GetFileNameWithoutExtension(file),
+                    Path = file,
+                    
+                    // Stock = Random.Shared.Next(0, 600),
+                };
+                
+                var iconModel = new IconModel(product)
+                {
+                    //JumboIcon = IconExtractor.GetIcon(filePath)
+                    JumboIcon = IconGet.GetThumbnail(file)
+                };
+
+                Icons.Add(iconModel); // 添加到主集合
             }
         }
     }
-
-    /// <summary>
-    /// 执行单个项目的移动操作
-    /// </summary>
-    /// <param name="item">要移动的图标对象</param>
-    /// <param name="source">原始所属集合</param>
-    private void MoveItem(IconModel item, IEnumerable source)
+    
+    private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
     {
-        // 从源集合移除
-        if (source is IList list) list.Remove(item);
-        
-        // 添加到目标集合
-        if (!Icons.Contains(item)) Icons.Add(item);
+        if (parent == null) return null;
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+            if (child is T result) return result;
+            else
+            {
+                var descendant = FindVisualChild<T>(child);
+                if (descendant != null) return descendant;
+            }
+        }
+        return null;
     }
     
     #endregion

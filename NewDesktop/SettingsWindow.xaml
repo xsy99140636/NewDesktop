@@ -16,6 +16,10 @@
                 <TextBlock Text="主页" Margin="8,0,0,0"/>
             </StackPanel>
             <StackPanel Tag="Box" Orientation="Horizontal" Background="Transparent">
+                <TextBlock Text="&#xECA5;" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16" Padding="0"/>
+                <TextBlock Text="桌面" Margin="8,0,0,0"/>
+            </StackPanel>
+            <StackPanel Tag="Box" Orientation="Horizontal" Background="Transparent">
                 <TextBlock Text="&#xE787;" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16" Padding="0"/>
                 <TextBlock Text="盒子" Margin="8,0,0,0"/>
             </StackPanel>

@@ -1,7 +1,7 @@
 ﻿<Window x:Class="NewDesktop.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:dd="urn:gong-wpf-dragdrop"
+        xmlns:dd="clr-namespace:NewDesktop.Behaviors"
         xmlns:views1="clr-namespace:NewDesktop.Views"
         xmlns:viewModels="clr-namespace:NewDesktop.ViewModels"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
@@ -11,7 +11,7 @@
         Left="0" Top="0"
         Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}}"
         Height="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}}"
-        AllowDrop="True" Background="Transparent">
+        Background="Transparent">
     <!-- Background="Transparent" Width="1200" Height="800" WindowStyle="None" AllowsTransparency="True" -->
 
     <!-- 业务逻辑绑定 -->
@@ -21,14 +21,7 @@
 
     <Grid>
         <!-- 显示 -->
-        <ListView ItemsSource="{Binding Icons}"
-                  Style="{StaticResource CustomListViewStyle}"
-                  dd:DragDrop.IsDragSource="True"
-                  dd:DragDrop.IsDropTarget="True"
-                  dd:DragDrop.DropHandler="{Binding}"
-                  dd:DragDrop.DragHandler="{Binding}"
-                  dd:DragDrop.UseDefaultDragAdorner="True"
-                  dd:DragDrop.UseDefaultEffectDataTemplate="True">
+        <ListView ItemsSource="{Binding Icons}" AllowDrop="True" Style="{StaticResource CustomListViewStyle}" SelectionMode="Extended" dd:IconDragDropBehavior.IsEnabled="true" dd:IconDragDropBehavior.DropHandler="{Binding HandleDropCommand}">
 
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseRightButtonUp">
@@ -38,10 +31,9 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             
-            
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas Background="#02FFFFFF"/><!-- Canvas布局容器 -->
+                    <Canvas Background="#02FFFFFF" Name="PART_Canvas"/><!-- Canvas布局容器 -->
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
 
@@ -90,7 +82,7 @@
             </ItemsControl.Resources>
 
         </ItemsControl>
-
+        
         <!-- 操作面板 -->
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="10">
             <!-- <Button Content="新建桌面盒子" Command="{Binding AddShelfCommand}" Margin="10,0"/> -->
@@ -99,5 +91,6 @@
             <!-- <Button Content="加载布局" Command="{Binding ImportLayoutCommand}" CommandParameter="layout.json" Margin="10,0"/> -->
             <Button Content="Box设置" Command="{Binding OpenBoxSettingsCommand}" Margin="10,0"/>
         </StackPanel>
+        
     </Grid>
 </Window>

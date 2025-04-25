@@ -30,9 +30,7 @@ public partial class ColorPickerUserControl
     [ObservableProperty] private double _x = -8, _y = -8;
     
     // 1. 定义依赖属性
-
-
-
+    
     public static readonly DependencyProperty SelectedColorProperty =
         DependencyProperty.Register(
             nameof(SelectedColor),

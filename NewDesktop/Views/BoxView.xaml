@@ -4,7 +4,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:av="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:dd="urn:gong-wpf-dragdrop"
+    xmlns:dd="clr-namespace:NewDesktop.Behaviors"
     xmlns:views1="clr-namespace:NewDesktop.Views"
     xmlns:viewModels="clr-namespace:NewDesktop.ViewModels"
     xmlns:behaviors="clr-namespace:NewDesktop.Behaviors"
@@ -48,13 +48,10 @@
                       Style="{StaticResource CustomListViewStyle}"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                      dd:DragDrop.IsDragSource="True"
-                      dd:DragDrop.IsDropTarget="True"
-                      dd:DragDrop.DragHandler="{Binding}"
-                      dd:DragDrop.UseDefaultEffectDataTemplate="True"
-                      dd:DragDrop.UseDefaultDragAdorner="True"
                       BorderBrush="{x:Null}"
-                      BorderThickness="0,0,0,0">
+                      BorderThickness="0"
+                      dd:IconDragDropBehavior.IsEnabled="true"
+                      dd:IconDragDropBehavior.DropHandler="{Binding HandleDropCommand}">
 
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseRightButtonUp">

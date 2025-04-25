@@ -6,9 +6,10 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:behaviors="clr-namespace:NewDesktop.Behaviors"
     mc:Ignorable="av" 
+    av:DesignHeight="80" av:DesignWidth="64" 
+    AllowDrop="True"  MouseMove="UserControl_MouseMove">
     
-    av:DesignHeight="80" av:DesignWidth="64">
-    <Grid >
+    <Grid>
         
         <i:Interaction.Behaviors>
             <behaviors:DoubleClickBehavior Command="{Binding HandleDoubleClickCommand}" />
@@ -20,7 +21,7 @@
         </Grid.RowDefinitions>
 
         <Border Padding="5,5,5,5" >
-            <Image Source="{Binding JumboIcon}" />
+            <Image Source="{Binding JumboIcon}" Drop="IconView_OnDrop"/>
         </Border>
         
         <TextBlock Text="{Binding Name}" Grid.Row="1" FontSize="10" TextWrapping="Wrap" TextAlignment="Center"/>

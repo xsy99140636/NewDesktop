@@ -1,24 +1,22 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using GongSolutions.Wpf.DragDrop;
 using NewDesktop.Models;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Interop;
 using NewDesktop.Shell;
 using System.Windows.Media;
 using NewDesktop.Services;
+using static NewDesktop.Behaviors.IconDragDropBehavior;
 
 namespace NewDesktop.ViewModels;
 
 /// <summary>
 /// 桌面盒子视图模型
 /// </summary>
-public partial class BoxModel : ObservableObject, IDropTarget
+public partial class BoxModel : ObservableObject// , IDropTarget
 {
     [ObservableProperty]
     private Box _model;
@@ -165,74 +163,54 @@ public partial class BoxModel : ObservableObject, IDropTarget
     
     
     #region 拖动处理
-
-    /// <summary>
-    /// 拖拽悬停时触发的逻辑（验证拖拽数据有效性）
-    /// </summary>
-    /// <param name="dropInfo">拖拽信息对象，包含拖拽数据和上下文</param>
-    public void DragOver(IDropInfo dropInfo)
-    {
-        // 验证拖拽数据是否符合要求：
-        // 1. 单个 IconModel 对象
-        // 2. 或多个 IconModel 组成的集合
-        bool validData = dropInfo.Data is IconModel
-                         || (dropInfo.Data is IEnumerable items && items.Cast<object>().All(x => x is IconModel));
     
-        if (validData)
-        {
-            // 设置拖拽效果为移动操作
-            dropInfo.Effects = DragDropEffects.Move;
-            // 显示友好提示文本
-            dropInfo.DestinationText = $"放入{Name}";
-        }
-    }
-
-    /// <summary>
-    /// 拖拽释放时的处理逻辑（完成数据转移）
-    /// </summary>
-    /// <param name="dropInfo">拖拽信息对象</param>
-    public void Drop(IDropInfo dropInfo)
+    //[RelayCommand]
+    //private void HandleDrop(object droppedFiles)
+    //{
+    //    // 处理接收到的文件路径
+    //    //foreach (var file in droppedFiles)
+    //    //{
+    //    //    var fileName = Path.GetFileNameWithoutExtension(file);
+    //    //    var newIcon = new Icon
+    //    //    {
+    //    //        X = Random.Shared.Next(50, 1000),
+    //    //        Y = Random.Shared.Next(50, 600),
+    //    //        Name = fileName,
+    //    //        Path = file,
+    //    //        Stock = 1,
+    //    //    };
+    //    //    IconModels.Add(new(newIcon));
+    //    //}
+    //}
+    [RelayCommand]
+    private void HandleDrop(DropCommandData dropData)
     {
-        // 处理单个项目拖拽
-        if (dropInfo.Data is IconModel singleItem)
+        // 处理文件拖放逻辑
+        if (dropData.e.Data.GetDataPresent(DataFormats.FileDrop))
         {
-            MoveItem(singleItem, dropInfo.DragInfo.SourceCollection);
-        }
-        // 处理多选项目拖拽
-        else if (dropInfo.Data is IEnumerable multipleItems)
-        {
-            // 转换为具体对象列表（避免迭代时修改集合的问题）
-            foreach (IconModel item in multipleItems.Cast<IconModel>().ToList())
+            var files = (string[])dropData.e.Data.GetData(DataFormats.FileDrop);
+            foreach (var file in files)
             {
-                MoveItem(item, dropInfo.DragInfo.SourceCollection);
+                var product = new Icon
+                {
+                    X = 0,
+                    Y = 0,
+                    Name = Path.GetFileNameWithoutExtension(file),
+                    Path = file,
+                    
+                    // Stock = Random.Shared.Next(0, 600),
+                };
+                
+                var iconModel = new IconModel(product)
+                {
+                    //JumboIcon = IconExtractor.GetIcon(filePath)
+                    JumboIcon = IconGet.GetThumbnail(file)
+                };
+                
+                IconModels.Add(iconModel); // 添加到主集合
             }
         }
     }
-
-    /// <summary>
-    /// 执行单个项目的移动操作
-    /// </summary>
-    /// <param name="item">要移动的图标对象</param>
-    /// <param name="source">原始所属集合</param>
-    /// <summary>
-    /// 执行单个项目的移动操作
-    /// </summary>
-    /// <param name="item">要移动的图标对象</param>
-    /// <param name="source">原始所属集合</param>
-    private void MoveItem(IconModel item, IEnumerable source)
-    {
-        // 从源集合中移除（仅当源支持修改时）
-        if (source is IList list) list.Remove(item);
-        IconModels.Add(item);
-        // 避免重复添加至目标集合
-        if (!IconModels.Contains(item)) 
-        {
-            // 添加至当前集合
-            
-            // 同步更新底层数据模型
-            Model.Icons.Add(item.Model);
-        }
-    }
-
+    
     #endregion
 }

@@ -91,7 +91,7 @@ public partial class IconModel : ObservableObject, IDragSource
         }
     }
     
-    #region 拖动
+    //#region 拖动
 
     // 开始拖动时的初始化操作
     public void StartDrag(IDragInfo dragInfo)
@@ -123,6 +123,6 @@ public partial class IconModel : ObservableObject, IDragSource
     // 异常处理策略
     public bool TryCatchOccurredException(Exception exception) => false;
 
-    #endregion
+    //#endregion
 
 }

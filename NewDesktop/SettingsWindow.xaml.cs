@@ -1,8 +1,10 @@
-﻿using NewDesktop.ViewModels;
+﻿using System.Runtime.InteropServices;
+using NewDesktop.ViewModels;
 using NewDesktop.Views.SettingsPage;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 
 namespace NewDesktop;
 
@@ -61,5 +63,6 @@ public partial class SettingsWindow : Window
         ContentFrame.Navigate(_ss);
         MyListView.SelectedItem = null;
     }
+    
 }
 

@@ -31,29 +31,10 @@ public partial class BoxView
         InitializeComponent();
         // 初始化调整手柄数组（按顺序存储八个方向的手柄）
         _resizeThumbs = [Resize_L, Resize_R, Resize_T, Resize_B, Resize_T_L, Resize_T_R, Resize_B_L, Resize_B_R];InitializeResizeHandlers();
-        DataContextChanged += OnDataContextChanged;
-    }
-
-
-
-    private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-    {
-        if (e.OldValue is BoxModel oldVm)
-        {
-            //oldVm.PropertyChanged -= VmPropertyChanged;
-        }
-
-        if (e.NewValue is BoxModel newVm)
-        {
-            //newVm.PropertyChanged += VmPropertyChanged;
-        }
     }
 
     #region 折叠/展开功能
-    //private void cc(object sender, System.Windows.Input.MouseButtonEventArgs e)
-    //{
 
-    //}
     private void cc(object sender, MouseButtonEventArgs e)
     {
         if (!(DataContext is BoxModel iconData)) return;

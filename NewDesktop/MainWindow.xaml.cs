@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Windows;
 using NewDesktop.Shell;
 
 namespace NewDesktop;
@@ -10,6 +12,11 @@ public partial class MainWindow
         InitializeComponent();
         // Loaded += (s, e) => AttachToDesktop();
         Loaded += (s, e) => DesktopAttacher.AttachToDesktop(this);
+    }
+
+    private void ss(object sender, System.Windows.DragEventArgs e)
+    {
+        Debug.WriteLine("DragOver");
     }
 
     // private void Window_DragOver(object sender, DragEventArgs e)
@@ -48,4 +55,10 @@ public partial class MainWindow
     //         }
     //     }
     // }
+    private void UIElement_OnDrop(object sender, DragEventArgs e)
+    {
+        // throw new NotImplementedException();
+        Debug.WriteLine("文件拖入");
+        e.Handled = true;
+    }
 }
