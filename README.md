@@ -13,6 +13,9 @@
   <a>
     <img alt="Static Badge" src="https://img.shields.io/badge/.NET-9.0-512BD4?link=https%3A%2F%2Fdotnet.microsoft.com%2F">
   </a>
+  <a>
+    <img alt="Static Badge" src="https://img.shields.io/badge/WPF-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F-0078D4">
+  </a>
 </div>
 
 # 预览
