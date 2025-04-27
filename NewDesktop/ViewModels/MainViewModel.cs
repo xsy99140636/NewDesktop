@@ -202,11 +202,15 @@ public partial class MainViewModel : ObservableObject//, IDropTarget
             Y = Random.Shared.Next(0, 600),
             Name = $"盒子{Enumerable.OfType<BoxModel>(Entities).Count() + 1}",
         };
-        Entities.Add(new BoxModel(shelf));
+        Entities.Add(new BoxModel(shelf,this));
     }
 
     [RelayCommand]
-    private void RemoveShelf() => Entities.Remove(SelectedEntity);
+    private void RemoveShelf(BoxModel? Selected)
+    {
+        Selected ??= SelectedEntity;
+        Entities.Remove(Selected);
+    }
 
 
     /// <summary>
@@ -258,7 +262,7 @@ public partial class MainViewModel : ObservableObject//, IDropTarget
             DefaultExt = ".json"
         };
 
-        if (openFileDialog.ShowDialog() == true) SaveLoadService.LoadLayout(openFileDialog.FileName, Entities, Icons);
+        if (openFileDialog.ShowDialog() == true) SaveLoadService.LoadLayout(openFileDialog.FileName, Entities, Icons,this);
 
         SaveLayout(_defaultLayoutPath);
     }
@@ -273,7 +277,7 @@ public partial class MainViewModel : ObservableObject//, IDropTarget
     /// 加载JSON文件到当前布局
     /// </summary>
     [RelayCommand]
-    private void LoadLayout(string path) => SaveLoadService.LoadLayout(path, Entities, Icons);
+    private void LoadLayout(string path) => SaveLoadService.LoadLayout(path, Entities, Icons,this);
 
     #endregion
         

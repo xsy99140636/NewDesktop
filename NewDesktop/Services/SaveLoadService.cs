@@ -81,7 +81,7 @@ abstract class SaveLoadService
     /// 2. 重建视图模型
     /// 3. 执行数据清理
     /// </remarks>
-    public static void LoadLayout(string path, ObservableCollection<BoxModel> boxModels, ObservableCollection<IconModel> iconModels)
+    public static void LoadLayout(string path, ObservableCollection<BoxModel> boxModels, ObservableCollection<IconModel> iconModels, MainViewModel parent)
     {
         try
         {
@@ -106,7 +106,7 @@ abstract class SaveLoadService
                     var box = JsonConvert.DeserializeObject<Box>(boxJson.ToString());
 
                     // 创建对应的视图模型并添加到集合
-                    boxModels.Add(new BoxModel(box));
+                    boxModels.Add(new BoxModel(box,parent));
                 }
             }
 

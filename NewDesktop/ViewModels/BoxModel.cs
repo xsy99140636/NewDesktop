@@ -1,14 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NewDesktop.Models;
+using NewDesktop.Services;
+using NewDesktop.Shell;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Interop;
-using NewDesktop.Shell;
 using System.Windows.Media;
-using NewDesktop.Services;
 using static NewDesktop.Behaviors.IconDragDropBehavior;
 
 namespace NewDesktop.ViewModels;
@@ -24,6 +25,8 @@ public partial class BoxModel : ObservableObject// , IDropTarget
     [ObservableProperty]
     private ObservableCollection<IconModel> _iconModels = new();
 
+    public MainViewModel Parent { get; }
+    
     // partial void OnIconChanged(ObservableCollection<IconModel> value)
     // {
     //     Icons = _icon.Model;
@@ -110,10 +113,11 @@ public partial class BoxModel : ObservableObject// , IDropTarget
     
     #endregion
     
-    public BoxModel(Box model)
+    public BoxModel(Box model, MainViewModel parent)
     {
         _model = model;
-
+        Parent = parent;
+        
         foreach (var product in _model.Icons)
         {
             var iconModel = new IconModel(product);
@@ -154,35 +158,48 @@ public partial class BoxModel : ObservableObject// , IDropTarget
         
         // 获取窗口句柄
         // 获取主窗口句柄
-        var mainWindow = Application.Current.MainWindow; // 修复此处
+        var mainWindow = Application.Current.MainWindow;
         var handle = new WindowInteropHelper(mainWindow).Handle;
 
         // 显示系统右键菜单
         DesktopAttacher.ShowContextMenu(items, mousePoint, handle);
     }
-    
-    
-    #region 拖动处理
-    
-    //[RelayCommand]
-    //private void HandleDrop(object droppedFiles)
-    //{
-    //    // 处理接收到的文件路径
-    //    //foreach (var file in droppedFiles)
-    //    //{
-    //    //    var fileName = Path.GetFileNameWithoutExtension(file);
-    //    //    var newIcon = new Icon
-    //    //    {
-    //    //        X = Random.Shared.Next(50, 1000),
-    //    //        Y = Random.Shared.Next(50, 600),
-    //    //        Name = fileName,
-    //    //        Path = file,
-    //    //        Stock = 1,
-    //    //    };
-    //    //    IconModels.Add(new(newIcon));
-    //    //}
-    //}
+
     [RelayCommand]
+    private void Setnull()
+    {
+        if (IsExpanded == null)
+        {
+            IsExpanded = true;
+            Height1 = Height;
+        }
+        else
+        {
+            IsExpanded = null;
+            Height1 = HeadHeight;
+        }
+    }
+        #region 拖动处理
+
+        //[RelayCommand]
+        //private void HandleDrop(object droppedFiles)
+        //{
+        //    // 处理接收到的文件路径
+        //    //foreach (var file in droppedFiles)
+        //    //{
+        //    //    var fileName = Path.GetFileNameWithoutExtension(file);
+        //    //    var newIcon = new Icon
+        //    //    {
+        //    //        X = Random.Shared.Next(50, 1000),
+        //    //        Y = Random.Shared.Next(50, 600),
+        //    //        Name = fileName,
+        //    //        Path = file,
+        //    //        Stock = 1,
+        //    //    };
+        //    //    IconModels.Add(new(newIcon));
+        //    //}
+        //}
+        [RelayCommand]
     private void HandleDrop(DropCommandData dropData)
     {
         // 处理文件拖放逻辑

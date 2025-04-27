@@ -2,7 +2,10 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Forms.Design.Behavior;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using BoxModel = NewDesktop.ViewModels.BoxModel;
@@ -11,8 +14,6 @@ namespace NewDesktop.Views;
 
 public partial class BoxView
 {
-
-
     // 调整手柄数组
     private readonly Thumb[] _resizeThumbs;
     
@@ -25,104 +26,99 @@ public partial class BoxView
     /// 尺寸对齐单位（按住CTRL时调整尺寸的基准单位）
     /// </summary>
     private static double SNAP_UNIT { get; set; } = 64;
-
+    
     public BoxView()
     {
         InitializeComponent();
         // 初始化调整手柄数组（按顺序存储八个方向的手柄）
-        _resizeThumbs = [Resize_L, Resize_R, Resize_T, Resize_B, Resize_T_L, Resize_T_R, Resize_B_L, Resize_B_R];InitializeResizeHandlers();
+        _resizeThumbs = [Resize_L, Resize_R, Resize_T, Resize_B, Resize_T_L, Resize_T_R, Resize_B_L, Resize_B_R];
+        InitializeResizeHandlers();
+        Loaded += SettingsWindow_Loaded;
+    }
+
+    private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        createContextMenu();
     }
 
     #region 折叠/展开功能
 
-    private void cc(object sender, MouseButtonEventArgs e)
+    private double _to;
+    
+    private DoubleAnimation _animation;
+
+    private void HeadDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (!(DataContext is BoxModel iconData)) return;
-        //if (e.PropertyName == nameof(BoxModel.IsExpanded) && DataContext is BoxModel iconData) { 
-
-        if (iconData.IsExpanded == true)
-        {
-            // 禁用动画期间的手柄操作
-            foreach (var thumb in _resizeThumbs)
-            {
-                thumb.IsEnabled = false;
-            }
-        
-            // 动画：收缩到仅标题栏高度
-            var animation = new DoubleAnimation
-            {
-                To = iconData.HeadHeight,
-                Duration = TimeSpan.FromSeconds(0.3),
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
-            };
-            
-            animation.Completed += (s, args) =>
-            {
-                BeginAnimation(HeightProperty, null);
-                // 动画结束后更新ViewModel
-                iconData.Height1 = iconData.HeadHeight;
-                iconData.IsExpanded = false;
-                Debug.WriteLine($"收起: {iconData.Height}");
-                // RestoreThumbs();
-            };
-            BeginAnimation(HeightProperty, animation);
-            return;
-        }
 
         if (iconData.IsExpanded == false)
         {
-            // 动画：展开到保存的高度
-            var animation1 = new DoubleAnimation
-            {
-                To = iconData.Height,
-                Duration = TimeSpan.FromSeconds(0.3),
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
-            };
-        
-            animation1.Completed += (s, args) =>
-            {
-                BeginAnimation(HeightProperty, null);
-                // 动画结束后更新ViewModel
-                iconData.Height1 = iconData.Height;
-                iconData.IsExpanded = true;
-                Debug.WriteLine($"展开: {iconData.Height}");
-                // 禁用动画期间的手柄操作
-                foreach (var thumb in _resizeThumbs)
-                {
-                    thumb.IsEnabled = true;
-                }
-                // RestoreThumbs();
-            };
-       
-            BeginAnimation(HeightProperty, animation1);
-            return;
+            iconData.IsExpanded = true;
+            _to = iconData.Height;
+            foreach (var thumb in _resizeThumbs) thumb.IsEnabled = false;
+            CollapseToExpandTheAnimation();
         }
-            // if (_isExpanded)
-            // {
-            //     // 保存实际内容高度（排除标题栏）
-            //     _expandedHeight = iconData.Height;
-            //
-            //     // 直接设置高度（不通过动画）
-            //     iconData.Height = 24;
-            //     // ContentScroll.Visibility = Visibility.Collapsed;
-            //     foreach (var thumb in _resizeThumbs)
-            //     {
-            //         thumb.IsEnabled = false;
-            //     }
-            // }
-            // else
-            // {
-            //     // 恢复高度并显示内容
-            //     iconData.Height = _expandedHeight;
-            //     // ContentScroll.Visibility = Visibility.Visible;
-            //     foreach (var thumb in _resizeThumbs)
-            //     {
-            //         thumb.IsEnabled = true;
-            //     }
-            // }
+        else if (iconData.IsExpanded == true)
+        {
+                        iconData.IsExpanded = false;
+                        _to = iconData.HeadHeight;
+                        CollapseToExpandTheAnimation();
+        }
+
+        //    Debug.WriteLine($"现在: {iconData.Height}");
+    }
+
+    private void MouseEnterBox(object sender, MouseEventArgs e)
+    {
+        if (!(DataContext is BoxModel iconData)) return;
+        _to = iconData.Height;
+        foreach (var thumb in _resizeThumbs) thumb.IsEnabled = false;
+        if (iconData.IsExpanded == null) CollapseToExpandTheAnimation();
+    }
+
+    private void MouseLeaveBox(object sender, MouseEventArgs e)
+    {
+        if (!(DataContext is BoxModel iconData)) return;
+        _to = iconData.HeadHeight;
+        if (iconData.IsExpanded == null) CollapseToExpandTheAnimation();
+    }
+
+    private void CollapseToExpandTheAnimation()
+    {
+    if ( _animation != null) _animation.Completed -= AnimationCompletedHandler;
         
-        Debug.WriteLine($"现在: {iconData.Height}");}
-    //}
+    //    // 动画：展开到保存的高度
+    _animation = new DoubleAnimation
+    {
+        // From = ActualHeight,
+        To = _to,
+        Duration = TimeSpan.FromSeconds(0.3),
+        EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+    };
+        
+    _animation.Completed += AnimationCompletedHandler;
+        
+    BeginAnimation(HeightProperty, _animation);
+    }
+
+    private void AnimationCompletedHandler(object? sender, EventArgs e)
+    {
+        if (!(DataContext is BoxModel iconData)) return;
+
+        BeginAnimation(HeightProperty, null);
+
+        iconData.Height1 = _to;
+
+        if (iconData.IsExpanded == true)
+        {
+            //        // 恢复手柄操作
+            foreach (var thumb in _resizeThumbs) thumb.IsEnabled = true;
+            //    }
+
+            //    Debug.WriteLine($"完成: {iconData.Height}");
+        }
+    }
+
     #endregion
     
     #region 尺寸调整功能
@@ -227,7 +223,109 @@ public partial class BoxView
         // 计算对齐后的尺寸（四舍五入到最近的单位倍数）
         return Math.Round((rawSize - margin) / unit) * unit + margin;
     }
+
     #endregion
 
+    #region 右键菜单功能
+    
+    ContextMenu _contextMenu = new();
 
+    private void createContextMenu()
+    {
+        if (DataContext is not BoxModel boxModel) return;
+        var mainViewModel = boxModel.Parent;
+        
+        var Aa = "";
+
+        if (boxModel.IsExpanded == null)
+        {
+            Aa = "\uF16C";
+        }
+        else if (boxModel.IsExpanded == true)
+        {
+            Aa = "\uF16D";
+        }
+        else if (boxModel.IsExpanded == false)
+        {
+            Aa = "\uF16B";
+        }
+        
+        _contextMenu.Items.Add(CreateMenuItem("新建盒子", "\uE710", mainViewModel.AddShelfCommand));
+        _contextMenu.Items.Add(CreateMenuItem("移除盒子", "\uE74D", mainViewModel.RemoveShelfCommand, commandParameter: boxModel));
+        // contextMenu.Items.Add(CreateMenuItem("图标显示"));
+        // contextMenu.Items.Add(CreateMenuItem("列表显示"));
+        // 一级菜单项（带子菜单）
+        // contextMenu.Items.Add(CreateNestedMenuItem("盒子样式",
+        //     CreateMenuItem("图标"),
+        //     CreateMenuItem("列表"),
+        //     CreateMenuItem("列表")
+        // ));
+
+        // _contextMenu.Items.Add(CreateMenuItem("占位符"));
+        // contextMenu.Items.Add(CreateMenuItem("位置锁定"));
+        _contextMenu.Items.Add(CreateMenuItem("自动盒子", Aa, boxModel.SetnullCommand));
+
+        // 添加底部空白分隔项
+        _contextMenu.Items.Add(new Separator());
+        _contextMenu.Items.Add(CreateMenuItem("设置菜单", "\uE713", mainViewModel.OpenBoxSettingsCommand));
+    }
+    
+    private void ContentArea_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        // 设置菜单显示位置
+        _contextMenu.Placement = PlacementMode.MousePoint;
+
+        // 显示菜单
+        _contextMenu.IsOpen = true;
+
+        // 标记事件已处理（防止冒泡）
+        e.Handled = true;
+    }
+
+
+    // 独立菜单项创建函数
+    private MenuItem CreateMenuItem(string header, string iconGlyph = null, ICommand? command = null, object commandParameter = null)
+    {
+        var menuItem = new MenuItem
+        {
+            Header = header,
+            Command = command,
+            CommandParameter = commandParameter,
+            //Tag = "menu_custom" // 添加标识用于自动化测试
+        };
+        
+        // 添加图标
+        // if (iconResourceKey != null && Application.Current.Resources.Contains(iconResourceKey))
+        // {
+        //     menuItem.Icon = Application.Current.Resources[iconResourceKey];
+        // }
+        if (!string.IsNullOrEmpty(iconGlyph))
+        {
+            menuItem.Icon = new ContentControl
+            {
+                Template = (ControlTemplate)Resources["IconTemplate"],
+                Tag = iconGlyph
+            };
+        }
+        // 事件绑定
+        //menuItem.Click += clickHandler;
+
+        // 添加辅助功能支持
+        // AutomationProperties.SetName(menuItem, $"{header}菜单项");
+
+        return menuItem;
+    }
+
+    // 创建带子菜单的菜单项
+    private MenuItem CreateNestedMenuItem(string header, params MenuItem[] children)
+    {
+        var menuItem = CreateMenuItem(header);
+        menuItem.Items.Add(new Separator());
+        foreach (var child in children)
+        {
+            menuItem.Items.Add(child);
+        }
+        return menuItem;
+    }
+    #endregion
 }

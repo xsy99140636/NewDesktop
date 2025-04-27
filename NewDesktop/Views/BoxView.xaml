@@ -10,14 +10,33 @@
     xmlns:behaviors="clr-namespace:NewDesktop.Behaviors"
     mc:Ignorable="av" 
     Height="{Binding Height1}" av:DesignWidth="320"
-    Width="{Binding Width}" av:DesignHeight="320">
+    Width="{Binding Width}" av:DesignHeight="320" 
+    MouseRightButtonUp="ContentArea_MouseRightButtonDown" MouseEnter="MouseEnterBox" MouseLeave="MouseLeaveBox">
+    <!--  -->
+    <UserControl.Resources>
+        <!-- 使用系统默认图标字体 -->
+        <FontFamily x:Key="IconFontFamily">
+            Segoe Fluent Icons,
+            Segoe MDL2 Assets,
+            /fonts/#Segoe MDL2 Assets
+        </FontFamily>
 
+        <!-- 动态图标模板 -->
+        <ControlTemplate x:Key="IconTemplate" TargetType="ContentControl">
+            <TextBlock 
+                Text="{TemplateBinding Tag}"
+                FontFamily="{StaticResource IconFontFamily}"
+                FontSize="16"
+                VerticalAlignment="Center"
+                Margin="0,0,8,0"/>
+        </ControlTemplate>
+    </UserControl.Resources>
+    
     <Border CornerRadius="{Binding Corner}" >
         <Border.Background>
             <!-- <SolidColorBrush Color="{Binding Color}"/> -->
             <SolidColorBrush Color="{Binding BoxColor}"/>
         </Border.Background>
-        
         
         <Grid>
 
@@ -32,7 +51,7 @@
             <Border Grid.Row="0"  Background="Transparent" >
                 <!-- 拖动块 -->
                 <i:Interaction.Behaviors>
-                    <behaviors:DoubleClickBehavior MouseDown="cc" />
+                    <behaviors:DoubleClickBehavior MouseDown="HeadDoubleClick" />
                     <behaviors:DragBehavior/>
                 </i:Interaction.Behaviors>
                 
@@ -53,13 +72,21 @@
                       dd:IconDragDropBehavior.IsEnabled="true"
                       dd:IconDragDropBehavior.DropHandler="{Binding HandleDropCommand}">
 
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseRightButtonUp">
-                        <i:InvokeCommandAction 
-                            Command="{Binding RightClickCommand}"
-                            CommandParameter="{Binding SelectedItems, RelativeSource={RelativeSource AncestorType=ListView}}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
+                <i:Interaction.Behaviors>
+                    <behaviors:ContextMenuBehavior/>
+                </i:Interaction.Behaviors>
+                
+                <!-- <i:Interaction.Triggers> -->
+                <!--     <i:EventTrigger EventName="MouseRightButtonUp"> -->
+                <!--         <i:InvokeCommandAction Command="{Binding RightClickCommand}" CommandParameter="{Binding SelectedItems, RelativeSource={RelativeSource AncestorType=ListView}}"/> -->
+                <!--     </i:EventTrigger> -->
+                <!-- </i:Interaction.Triggers> -->
+                
+                <!-- <ListBox.ItemContainerStyle> -->
+                <!--     <Style TargetType="{x:Type ListBoxItem}"> -->
+                <!--         <Setter Property="Focusable" Value="False"/> -->
+                <!--     </Style> -->
+                <!-- </ListBox.ItemContainerStyle> -->
                 
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -79,7 +106,7 @@
             <!-- 手柄（拖动窗口用） -->
             <Grid Grid.Row="0" Grid.RowSpan="2">
                 <Thumb x:Name="Resize_L"    Panel.ZIndex="1"    Width="3"             HorizontalAlignment="Left"                              Cursor="SizeWE"     Margin="0,4,0,4"  OpacityMask="#00000000"/>
-                <Thumb x:Name="Resize_R"    Panel.ZIndex="1"    Width="3"             HorizontalAlignment="Right"                             Cursor="SizeWE"     Margin="0,4,0,4"  OpacityMask="#00000000" />
+                <Thumb x:Name="Resize_R"    Panel.ZIndex="1"    Width="3"             HorizontalAlignment="Right"                             Cursor="SizeWE"     Margin="0,4,0,4"  OpacityMask="#00000000"/>
                 <Thumb x:Name="Resize_T"    Panel.ZIndex="1"               Height="3"                             VerticalAlignment="Top"     Cursor="SizeNS"     Margin="4,0,4,0"  OpacityMask="#00000000"/>
                 <Thumb x:Name="Resize_B"    Panel.ZIndex="1"               Height="3"                             VerticalAlignment="Bottom"  Cursor="SizeNS"     Margin="4,0,4,0"  OpacityMask="#00000000"/>
                 <Thumb x:Name="Resize_T_L"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Left"  VerticalAlignment="Top"     Cursor="SizeNWSE"                     OpacityMask="#00000000"/>

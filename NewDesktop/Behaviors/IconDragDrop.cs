@@ -1,4 +1,4 @@
-﻿using NewDesktop.ViewModels;
+﻿﻿using NewDesktop.ViewModels;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
@@ -15,6 +15,8 @@ namespace NewDesktop.Behaviors;
 public static class IconDragDropBehavior
 {
     private static IconModel[] selectedItems;
+
+    private static bool _isDragging;
 
     #region IsEnabled 附加属性
     /// <summary>
@@ -115,6 +117,7 @@ public static class IconDragDropBehavior
             .OfType<IconModel>()
             .Where(item => !string.IsNullOrEmpty(item.Path))
             .ToArray();
+        _isDragging = true;
         // e.Handled = true;
     }
 
@@ -143,7 +146,7 @@ public static class IconDragDropBehavior
         //     // 启动拖放操作
         //     DragDrop.DoDragDrop(sender as ListView, dragData, DragDropEffects.Copy);
         // }
-        if (e.LeftButton == MouseButtonState.Pressed)
+        if (e.LeftButton == MouseButtonState.Pressed && _isDragging == true)
         {
             
             var listView = sender as ListView;
@@ -243,15 +246,15 @@ public static class IconDragDropBehavior
 
 
         if (dropCommand != null && dropCommand.CanExecute(commandData))
+        {
+            dropCommand.Execute(commandData);
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                dropCommand.Execute(commandData);
-                if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                {
-                    // 检查是否按下Ctrl键进行复制操作
-                    bool isCtrlPressed = (e.KeyStates & DragDropKeyStates.ControlKey) != 0;
-                    e.Effects = isCtrlPressed ? DragDropEffects.Copy : DragDropEffects.Move;
-                }
+                // 检查是否按下Ctrl键进行复制操作
+                bool isCtrlPressed = (e.KeyStates & DragDropKeyStates.ControlKey) != 0;
+                e.Effects = isCtrlPressed ? DragDropEffects.Copy : DragDropEffects.Move;
             }
+        }
 
     }
     #endregion

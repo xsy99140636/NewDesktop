@@ -170,7 +170,7 @@
             <!--     <TextBlock Text="#" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/> -->
             <!-- </Border> -->
             <TextBox Text="{Binding SelectedColor}" Width="125"/>
-            <Border CornerRadius="4,4,4,4" Margin="8,0,0,0">
+            <Border CornerRadius="4,4,4,4" Margin="8,0,0,0" Width="131">
                 <Border.Background>
                     <!-- <SolidColorBrush Color="{Binding Color}"/> -->
                     <SolidColorBrush Color="{Binding SelectedColor}"/>
