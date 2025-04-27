@@ -1,3 +1,21 @@
+<div align="center">
+  <a>
+    <img alt="" width="700"heigth="142"src="">
+  </a>
+  <h1>NewDesktop</h1>
+  <p>
+    这是一个基于WPF的Win桌面重写计划。
+  </p>
+  <p>
+    是个桌面整理软件加美化软件，计划在最大限度保留原生体验的前提下加点东西。
+  </p>
+
+  <a>
+<img alt="Static Badge" src="https://img.shields.io/badge/.NET-9.0-512BD4?link=https%3A%2F%2Fdotnet.microsoft.com%2F">
+  </a>
+  <br />
+  <br />
+</div>
 # NewDesktop
 这是一个基于WPF的桌面重写计划，是个桌面整理软件加美化软件，计划在最大限度保留原生体验的前提下加点东西。
 ![image](https://github.com/Yeilintong/NewDesktop/blob/main/Image/YL3.png)
