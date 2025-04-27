@@ -11,7 +11,7 @@
   </p>
 
   <a>
-    <img alt="Static Badge" src="https://img.shields.io/badge/.NET-9.0-512BD4?link=https%3A%2F%2Fdotnet.microsoft.com%2F">
+    <img alt="Static Badge" src="https://img.shields.io/badge/.NET-9.0-512BD4">
   </a>
   <a>
     <img alt="Static Badge" src="https://img.shields.io/badge/WPF-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F-0078D4">
@@ -20,8 +20,8 @@
 
 # 预览
 <div align="center">
-    <img src="YL3.png" alt="图片1" width="30%" align="center">
-    <img src="BS.png" alt="图片2" width="30%" align="center">
+    <img src="https://github.com/Yeilintong/NewDesktop/tree/main/Image/YL3.png" alt="图片1" width="30%" align="center">
+    <img src="https://github.com/Yeilintong/NewDesktop/tree/main/Image/BS.png" alt="图片2" width="30%" align="center">
 </div>
 
 # 操作
