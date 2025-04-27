@@ -20,7 +20,7 @@
 
 # 预览
 <div align="center">
-    <img src="[https://github.com/Yeilintong/NewDesktop/tree/main/Image/YL3.png](https://github.com/Yeilintong/NewDesktop/blob/main/Image/YL3.png)" alt="图片1" width="30%" align="center">
+    <img src="https://github.com/Yeilintong/NewDesktop/blob/main/Image/YL3.png" alt="图片1" width="30%" align="center">
     <img src="https://github.com/Yeilintong/NewDesktop/tree/main/Image/BS.png" alt="图片2" width="30%" align="center">
 </div>
 
