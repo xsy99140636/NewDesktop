@@ -5,6 +5,7 @@ using NewDesktop.Services;
 using NewDesktop.Shell;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -296,6 +297,11 @@ public partial class MainViewModel : ObservableObject//, IDropTarget
 
         // 获取相对于Canvas的鼠标位置
         Point dropPosition = dropData.e.GetPosition(canvas);
+
+        var dropPositionX = Math.Round((dropPosition.X-32)/64)*64;
+        var dropPositionY = Math.Round((dropPosition.Y-40)/80)*80;
+        
+        Debug.WriteLine($"{dropPositionX}");
         
         // 处理文件拖放逻辑
         if (dropData.e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -305,8 +311,8 @@ public partial class MainViewModel : ObservableObject//, IDropTarget
             {
                 var product = new Icon
                 {
-                    X = dropPosition.X,
-                    Y = dropPosition.Y,
+                    X = dropPositionX,
+                    Y = dropPositionY,
                     Name = Path.GetFileNameWithoutExtension(file),
                     Path = file,
                     

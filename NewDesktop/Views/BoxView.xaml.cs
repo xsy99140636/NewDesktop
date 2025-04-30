@@ -38,14 +38,14 @@ public partial class BoxView
 
     private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        createContextMenu();
+        CreateContextMenu();
     }
 
     #region 折叠/展开功能
 
     private double _to;
     
-    private DoubleAnimation _animation;
+    private DoubleAnimation? _animation;
 
     private void HeadDoubleClick(object sender, MouseButtonEventArgs e)
     {
@@ -60,9 +60,9 @@ public partial class BoxView
         }
         else if (iconData.IsExpanded == true)
         {
-                        iconData.IsExpanded = false;
-                        _to = iconData.HeadHeight;
-                        CollapseToExpandTheAnimation();
+            iconData.IsExpanded = false;
+            _to = iconData.HeadHeight;
+            CollapseToExpandTheAnimation();
         }
 
         //    Debug.WriteLine($"现在: {iconData.Height}");
@@ -92,7 +92,7 @@ public partial class BoxView
     {
         // From = ActualHeight,
         To = _to,
-        Duration = TimeSpan.FromSeconds(0.3),
+        Duration = TimeSpan.FromSeconds(0.2),
         EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
     };
         
@@ -146,8 +146,7 @@ public partial class BoxView
     /// </summary>
     private void AdjustWidth(double delta, bool adjustLeft)
     {
-        if (!(DataContext is BoxModel boxModel))
-            return;
+        if (!(DataContext is BoxModel boxModel)) return;
 
         // 计算原始新宽度（当前宽度加上变化量）
         var rawWidth = Width + delta;
@@ -208,7 +207,7 @@ public partial class BoxView
         // Height = newHeight;
         // _expandedHeight = newHeight; // 保持缓存值更新
         // 使用字符串插值输出变量值
-        Debug.WriteLine($"newHeight: {newHeight}");
+        // Debug.WriteLine($"newHeight: {newHeight}");
     }
 
     /// <summary>
@@ -217,8 +216,7 @@ public partial class BoxView
     private double ApplySizeConstraint(double rawSize, double unit, double margin)
     {
         // 检查Ctrl键状态
-        if (!(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
-            return rawSize;
+        if (!(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))) return rawSize;
 
         // 计算对齐后的尺寸（四舍五入到最近的单位倍数）
         return Math.Round((rawSize - margin) / unit) * unit + margin;
@@ -230,7 +228,7 @@ public partial class BoxView
     
     ContextMenu _contextMenu = new();
 
-    private void createContextMenu()
+    private void CreateContextMenu()
     {
         if (DataContext is not BoxModel boxModel) return;
         var mainViewModel = boxModel.Parent;

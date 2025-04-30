@@ -39,13 +39,13 @@ namespace NewDesktop.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            AssociatedObject.MouseLeftButtonDown += OnMouseLeftButtonDown;
+            AssociatedObject.MouseLeftButtonUp += OnMouseLeftButtonDown;
         }
 
         protected override void OnDetaching()
         {
             base.OnDetaching();
-            AssociatedObject.MouseLeftButtonDown -= OnMouseLeftButtonDown;
+            AssociatedObject.MouseLeftButtonUp -= OnMouseLeftButtonDown;
         }
 
         private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
