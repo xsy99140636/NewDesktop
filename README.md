@@ -9,14 +9,9 @@
   <p>
     是个桌面整理软件加美化软件，计划在最大限度保留原生体验的前提下加点东西。
   </p>
-  
-  <a href="./zh/README.md">
-    [English]
-  </a>
-<a href="./zh/README.md">
-    [中文]
-  </a>
-<br />
+
+[中文](./README.md) | [English](./README_en-us.md)
+
   <a>
     <img alt="Static Badge" src="https://img.shields.io/badge/.NET-9.0-512BD4">
   </a>
@@ -30,6 +25,7 @@
     <img src="./Image/YL3.png" alt="图片1" width="30%" align="center">
     <img src="./Image/BS.png" alt="图片2" width="30%" align="center">
 </div>
+
 
 # 操作
 ## 图标操作
