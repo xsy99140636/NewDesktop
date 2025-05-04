@@ -10,9 +10,12 @@
     是个桌面整理软件加美化软件，计划在最大限度保留原生体验的前提下加点东西。
   </p>
   
-  <p>
+  <a >
     [English](./README-en.md) | [中文](../zh/README.md)
-  </p>
+  </a>
+<a href="../zh/README.md">
+    [中文]
+  </a>
 <br />
   <a>
     <img alt="Static Badge" src="https://img.shields.io/badge/.NET-9.0-512BD4">
