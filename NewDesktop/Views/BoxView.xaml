@@ -37,7 +37,7 @@
             <!-- <SolidColorBrush Color="{Binding Color}"/> -->
             <SolidColorBrush Color="{Binding BoxColor}"/>
         </Border.Background>
-        
+        <AdornerDecorator>
         <Grid>
 
             <Grid.RowDefinitions>
@@ -68,7 +68,6 @@
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       ScrollViewer.VerticalScrollBarVisibility="Disabled"
                       BorderBrush="{x:Null}"
-                      BorderThickness="0"
                       dd:IconDragDropBehavior.IsEnabled="true"
                       dd:IconDragDropBehavior.DropHandler="{Binding HandleDropCommand}">
 
@@ -105,16 +104,16 @@
 
             <!-- 手柄（拖动窗口用） -->
             <Grid Grid.Row="0" Grid.RowSpan="2">
-                <Thumb x:Name="Resize_L"    Panel.ZIndex="1"    Width="3"             HorizontalAlignment="Left"                              Cursor="SizeWE"     Margin="0,4,0,4"  OpacityMask="#00000000"/>
-                <Thumb x:Name="Resize_R"    Panel.ZIndex="1"    Width="3"             HorizontalAlignment="Right"                             Cursor="SizeWE"     Margin="0,4,0,4"  OpacityMask="#00000000"/>
-                <Thumb x:Name="Resize_T"    Panel.ZIndex="1"               Height="3"                             VerticalAlignment="Top"     Cursor="SizeNS"     Margin="4,0,4,0"  OpacityMask="#00000000"/>
-                <Thumb x:Name="Resize_B"    Panel.ZIndex="1"               Height="3"                             VerticalAlignment="Bottom"  Cursor="SizeNS"     Margin="4,0,4,0"  OpacityMask="#00000000"/>
-                <Thumb x:Name="Resize_T_L"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Left"  VerticalAlignment="Top"     Cursor="SizeNWSE"                     OpacityMask="#00000000"/>
-                <Thumb x:Name="Resize_T_R"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Right" VerticalAlignment="Top"     Cursor="SizeNESW"                     OpacityMask="#00000000"/>
-                <Thumb x:Name="Resize_B_L"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Left"  VerticalAlignment="Bottom"  Cursor="SizeNESW"                     OpacityMask="#00000000"/>
-                <Thumb x:Name="Resize_B_R"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Cursor="SizeNWSE"                     OpacityMask="#00000000"/>
+                <Thumb x:Name="Resize_L"    Panel.ZIndex="1"    Width="3"             HorizontalAlignment="Left"                              Cursor="SizeWE"     Margin="0,4,0,4"  OpacityMask="#00000000" IsEnabled="{Binding IsExpanded}"/>
+                <Thumb x:Name="Resize_R"    Panel.ZIndex="1"    Width="3"             HorizontalAlignment="Right"                             Cursor="SizeWE"     Margin="0,4,0,4"  OpacityMask="#00000000" IsEnabled="{Binding IsExpanded}"/>
+                <Thumb x:Name="Resize_T"    Panel.ZIndex="1"               Height="3"                             VerticalAlignment="Top"     Cursor="SizeNS"     Margin="4,0,4,0"  OpacityMask="#00000000" IsEnabled="{Binding IsExpanded}"/>
+                <Thumb x:Name="Resize_B"    Panel.ZIndex="1"               Height="3"                             VerticalAlignment="Bottom"  Cursor="SizeNS"     Margin="4,0,4,0"  OpacityMask="#00000000" IsEnabled="{Binding IsExpanded}"/>
+                <Thumb x:Name="Resize_T_L"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Left"  VerticalAlignment="Top"     Cursor="SizeNWSE"                     OpacityMask="#00000000" IsEnabled="{Binding IsExpanded}"/>
+                <Thumb x:Name="Resize_T_R"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Right" VerticalAlignment="Top"     Cursor="SizeNESW"                     OpacityMask="#00000000" IsEnabled="{Binding IsExpanded}"/>
+                <Thumb x:Name="Resize_B_L"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Left"  VerticalAlignment="Bottom"  Cursor="SizeNESW"                     OpacityMask="#00000000" IsEnabled="{Binding IsExpanded}"/>
+                <Thumb x:Name="Resize_B_R"  Panel.ZIndex="1"    Width="4"  Height="4" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Cursor="SizeNWSE"                     OpacityMask="#00000000" IsEnabled="{Binding IsExpanded}"/>
             </Grid>
         </Grid>
-
+        </AdornerDecorator>
     </Border>
 </UserControl>

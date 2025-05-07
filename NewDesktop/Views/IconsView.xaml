@@ -8,13 +8,13 @@
     mc:Ignorable="av" 
     av:DesignHeight="80" av:DesignWidth="64" 
     AllowDrop="True"  MouseMove="UserControl_MouseMove">
-    
+
     <Grid>
-        
+
         <i:Interaction.Behaviors>
             <behaviors:DoubleClickBehavior Command="{Binding HandleDoubleClickCommand}" />
         </i:Interaction.Behaviors>
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="2*"/>
             <RowDefinition Height="*"/>
@@ -23,8 +23,20 @@
         <Border Padding="5,5,5,5" >
             <Image Source="{Binding JumboIcon}" Drop="IconView_OnDrop"/>
         </Border>
-        
-        <TextBlock Text="{Binding Name}" Grid.Row="1" FontSize="10" TextWrapping="Wrap" TextAlignment="Center"/>
 
+        <!-- <TextBlock Text="{Binding Name}" Foreground="Black" Grid.Row="1" FontSize="10" TextWrapping="Wrap" TextAlignment="Center"> -->
+        <!--     <TextBlock.Effect> -->
+        <!--         <BlurEffect Radius="1" KernelType="Box"/> -->
+        <!--     </TextBlock.Effect> -->
+        <!-- </TextBlock> -->
+        <TextBlock  Text="{Binding Name}" Foreground="White" Grid.Row="1" FontSize="10" TextWrapping="Wrap" TextAlignment="Center">
+        <TextBlock.Effect>
+            <DropShadowEffect
+                ShadowDepth="1"
+                Direction="315"
+                Color="black"
+                BlurRadius="2" Opacity="0.9" />
+        </TextBlock.Effect>
+        </TextBlock>
     </Grid>
 </UserControl>

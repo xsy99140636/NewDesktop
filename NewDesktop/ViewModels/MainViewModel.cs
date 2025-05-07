@@ -37,8 +37,25 @@ public partial class MainViewModel : ObservableObject//, IDropTarget
     {
         // 初始化时尝试加载默认布局
          InitializeLayout();
+         布局初始化();
     }
-    
+
+    [RelayCommand]
+    private void NewBox(NewBoxData selectedItems)
+    {
+        Debug.WriteLine($"{selectedItems.Size.X}, {selectedItems.Size.Y}");
+        Debug.WriteLine($"{selectedItems.Position.X}, {selectedItems.Position.Y}");
+        var shelf = new Box
+        {
+            X = selectedItems.Position.X,
+            Y = selectedItems.Position.Y,
+            Height = selectedItems.Size.X,
+            Width = selectedItems.Size.Y,
+            Name = $"盒子{Enumerable.OfType<BoxModel>(Entities).Count() + 1}",
+        };
+        Entities.Add(new BoxModel(shelf,this));
+    }
+
     [RelayCommand]
     private void RightClick(IList selectedItems)
     {
@@ -307,6 +324,8 @@ public partial class MainViewModel : ObservableObject//, IDropTarget
         if (dropData.e.Data.GetDataPresent(DataFormats.FileDrop))
         {
             var files = (string[])dropData.e.Data.GetData(DataFormats.FileDrop);
+
+            查找空位(2,2,files);
             foreach (var file in files)
             {
                 var product = new Icon
@@ -347,4 +366,78 @@ public partial class MainViewModel : ObservableObject//, IDropTarget
     }
     
     #endregion
+
+
+    private double 高=80;
+    private double 宽=64;
+    private IconModel[]? 测试;
+    
+    void 布局初始化()
+    {
+        double screenWidth = SystemParameters.PrimaryScreenWidth;
+        double screenHeight = SystemParameters.PrimaryScreenHeight;
+        
+        Debug.WriteLine($"<UNK>{screenWidth}*{screenHeight}");
+        
+        测试 = new IconModel[30];
+        测试[16] = new IconModel(new Icon());
+        测试[18] = new IconModel(new Icon());
+        测试[19] = new IconModel(new Icon());
+        索引计算(96, 160);
+        查找空位(96, 160,["a","b"]);
+    }
+
+
+    int 索引计算(double x, double y)
+    {
+        int 行 = (int)((y - 高 / 2) / 高);
+        int 列 = (int)((x - 宽 / 2) / 宽);
+
+        int 最大行 = (int)Math.Round(SystemParameters.PrimaryScreenHeight / 高);
+        
+        int 索引 = (int)(列 * Math.Round(SystemParameters.PrimaryScreenHeight / 高) + 行);
+        
+        Debug.WriteLine($"<UNK>{索引}");
+        
+        return 索引;
+        
+    }
+
+    void 查找空位(double x, double y,string[] 路径)
+    {
+        var 索引 = 索引计算(x,y);
+        
+        foreach (var file in 路径)
+        {
+            for (int i = 索引; i < 30; i++)
+            {
+                if (测试[i] == null)
+                {
+                    var product = new Icon
+                    {
+                        X = 22,
+                        Y = 22,
+                        Name = Path.GetFileNameWithoutExtension(file),
+                        Path = file,
+
+                        // Stock = Random.Shared.Next(0, 600),
+                    };
+
+                    var iconModel = new IconModel(product)
+                    {
+                        //JumboIcon = IconExtractor.GetIcon(filePath)
+                        JumboIcon = IconGet.GetThumbnail(file)
+                    };
+
+                    测试[i] = iconModel;
+
+                    索引 = i+1;
+                    
+                    break;
+                }
+            }
+            Debug.WriteLine($"<UNK>{测试}");
+        }
+        
+    }
 }

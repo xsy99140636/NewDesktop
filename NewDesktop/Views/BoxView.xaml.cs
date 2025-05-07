@@ -55,7 +55,7 @@ public partial class BoxView
         {
             iconData.IsExpanded = true;
             _to = iconData.Height;
-            foreach (var thumb in _resizeThumbs) thumb.IsEnabled = false;
+            //foreach (var thumb in _resizeThumbs) thumb.IsEnabled = false;
             CollapseToExpandTheAnimation();
         }
         else if (iconData.IsExpanded == true)
@@ -64,41 +64,47 @@ public partial class BoxView
             _to = iconData.HeadHeight;
             CollapseToExpandTheAnimation();
         }
-
-        //    Debug.WriteLine($"现在: {iconData.Height}");
     }
 
     private void MouseEnterBox(object sender, MouseEventArgs e)
     {
         if (!(DataContext is BoxModel iconData)) return;
-        _to = iconData.Height;
-        foreach (var thumb in _resizeThumbs) thumb.IsEnabled = false;
-        if (iconData.IsExpanded == null) CollapseToExpandTheAnimation();
+
+        if (iconData.IsExpanded == null)
+        {
+            _to = iconData.Height;
+            //foreach (var thumb in _resizeThumbs) thumb.IsEnabled = false;
+            CollapseToExpandTheAnimation();
+        }
     }
 
     private void MouseLeaveBox(object sender, MouseEventArgs e)
     {
         if (!(DataContext is BoxModel iconData)) return;
-        _to = iconData.HeadHeight;
-        if (iconData.IsExpanded == null) CollapseToExpandTheAnimation();
+
+        if (iconData.IsExpanded == null)
+        {
+            _to = iconData.HeadHeight;
+            CollapseToExpandTheAnimation();
+        }
     }
 
     private void CollapseToExpandTheAnimation()
     {
-    if ( _animation != null) _animation.Completed -= AnimationCompletedHandler;
-        
-    //    // 动画：展开到保存的高度
-    _animation = new DoubleAnimation
-    {
-        // From = ActualHeight,
-        To = _to,
-        Duration = TimeSpan.FromSeconds(0.2),
-        EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
-    };
-        
-    _animation.Completed += AnimationCompletedHandler;
-        
-    BeginAnimation(HeightProperty, _animation);
+        if (_animation != null) _animation.Completed -= AnimationCompletedHandler;
+
+        // 动画：展开到保存的高度
+        _animation = new DoubleAnimation
+        {
+            // From = ActualHeight,
+            To = _to,
+            Duration = TimeSpan.FromSeconds(0.2),
+            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+        };
+
+        _animation.Completed += AnimationCompletedHandler;
+
+        BeginAnimation(HeightProperty, _animation);
     }
 
     private void AnimationCompletedHandler(object? sender, EventArgs e)
@@ -108,15 +114,10 @@ public partial class BoxView
         BeginAnimation(HeightProperty, null);
 
         iconData.Height1 = _to;
-
-        if (iconData.IsExpanded == true)
-        {
-            //        // 恢复手柄操作
-            foreach (var thumb in _resizeThumbs) thumb.IsEnabled = true;
-            //    }
-
-            //    Debug.WriteLine($"完成: {iconData.Height}");
-        }
+            
+        // 恢复手柄操作
+        //if (iconData.IsExpanded == true) foreach (var thumb in _resizeThumbs) thumb.IsEnabled = true;
+ 
     }
 
     #endregion

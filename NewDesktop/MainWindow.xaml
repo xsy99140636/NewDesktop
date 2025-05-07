@@ -21,7 +21,12 @@
 
     <Grid>
         <!-- 显示 -->
-        <ListView ItemsSource="{Binding Icons}" AllowDrop="True" Style="{StaticResource CustomListViewStyle}" SelectionMode="Extended" behaviors:IconDragDropBehavior.IsEnabled="true" behaviors:IconDragDropBehavior.DropHandler="{Binding HandleDropCommand}">
+        <ListView ItemsSource="{Binding Icons}" 
+                  Style="{StaticResource CustomListViewStyle}" 
+                  SelectionMode="Extended" 
+                  behaviors:IconDragDropBehavior.IsEnabled="true" 
+                  behaviors:IconDragDropBehavior.DropHandler="{Binding HandleDropCommand}"
+                  behaviors:IconDragDropBehavior.NewBox="{Binding NewBoxCommand}">                  <!-- AllowDrop="True"  -->
             
             <i:Interaction.Behaviors>
                 <behaviors:ContextMenuBehavior/>
